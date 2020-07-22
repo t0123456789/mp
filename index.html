@@ -58,7 +58,30 @@
 			<span id="a3" class="ib" onclick="checkAnswer(3)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
 		</div>
 	</div>
+	
+	<script>
+		window.onload = function() {	  		
+		  es5doIt("statustext", false);		  
+		  gameStart();
+		}
+	</script>
   
+	<div id="statustext">
+		<div style="width:500px;height:30px"></div>
+		<div id="dbgtimer" style="width:300px;height:30px;border:1px solid #000;">300x30px</div>
+
+		<p id="error"> </p>
+		<p id="debug"> </p>	
+
+		<div id="iconhide" style="width:100px;height:100px;border:1px solid #000;position: relative">100x100px
+			<div class="abs tick" id="icon"></div>
+		</div>
+		<div style="width:100px;height:100px;border:1px solid #000;position: relative">100x100px
+			<div class="abs tick" id="alphaimg"></div>
+		</div>
+		<button onclick="es5toggleBlock('alphaimg')">Click to test toggle alpha image element</button>
+		<button onclick="es5ImageOnElem('a1', 'alphaimg')">Click to locate the element and draw alpha image on it.</button>
+	</div>
   
 </body>
 
