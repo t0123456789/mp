@@ -1,3 +1,8 @@
+---
+permalink: /index.html
+---
+
+
 # mp
 
 
