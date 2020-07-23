@@ -35,7 +35,7 @@
 
 <body>
   
-	<div style="font-size:24px;width:430px;margin-left:auto;margin-right:auto;">		
+	<div style="font-size:24px;max-width:430px;margin-left:auto;margin-right:auto;">		
 		<div style="height:40px;">	
 			<p id="scoretext"> </p>
 		</div>	
@@ -50,10 +50,10 @@
 		</div>
 		<p id="infotext">Click the answer:</p>
 		<div> 
-			<span id="a0" class="ib" onclick="mpclient.checkAnswer(0)">&nbsp;<br />word</span> 
-			<span id="a1" class="ib" onclick="mpclient.checkAnswer(1)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
-			<span id="a2" class="ib" onclick="mpclient.checkAnswer(2)">&nbsp;<br />000</span>	
-			<span id="a3" class="ib" onclick="mpclient.checkAnswer(3)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
+			<span id="a0" class="ib" tabindex="1" onkeyup="mpclient.keyPress(event, 0)" onclick="mpclient.checkAnswer(0)">&nbsp;<br />word</span> 
+			<span id="a1" class="ib" tabindex="2" onkeyup="mpclient.keyPress(event, 1)" onclick="mpclient.checkAnswer(1)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
+			<span id="a2" class="ib" tabindex="3" onkeyup="mpclient.keyPress(event, 2)" onclick="mpclient.checkAnswer(2)">&nbsp;<br />000</span>	
+			<span id="a3" class="ib" tabindex="4" onkeyup="mpclient.keyPress(event, 3)" onclick="mpclient.checkAnswer(3)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
 		</div>
 	</div>
 	
@@ -66,6 +66,11 @@
 	<div id="statustext" style="display:none">
 		<div style="width:500px;height:30px"></div>
 		<div id="dbgtimer" style="width:300px;height:30px;border:1px solid #000;">300x30px</div>
+
+		<img id="star" class="hiddeninit" src="img/star.jpg" alt="A star">
+		<img id="heart" class="hiddeninit" src="img/heart.png" alt="A heart">
+		<img id="alphacoins" class="hiddeninit" src="img/alpha.png" alt="coins">
+		<img id="p0" class="hiddeninit" src="img/p0.jpg" alt="player 0">
 
 		<p id="error"> </p>
 		<p id="debug"> </p>	

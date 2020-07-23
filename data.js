@@ -58,10 +58,6 @@
 			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
         ]},
         
-        defaultimages: { 
-            arr:["p0.png","coin.png"] 
-        },
-		
     };
 
     window.mpdata = mpdata;

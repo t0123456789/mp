@@ -63,6 +63,11 @@ div.cross {
 	background-image: url('cross.png');	
 }
 
+img.hiddeninit {
+	width: 10px;
+	height: 10px;
+}
+
 canvas {
 	display: block;
 	border: 2px solid lime;

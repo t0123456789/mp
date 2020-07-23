@@ -68,10 +68,11 @@ mpscene = (function () {
 			ctx.fillRect(150, 0, 150, 200);
 		
 			// images
-			/*var img = document.getElementById("leaves");
-			ctx.drawImage(img, 150, 200, 150, 100);
-			var imga = document.getElementById("acoin");
-			ctx.drawImage(imga, 150, 150);*/
+
+			//var img = document.getElementById('icon').getElementsByTagName('background-image')[0];
+			var img = document.getElementById("alphacoins");
+			ctx.drawImage(img, 150, 150);
+			//ctx.drawImage(img, 150, 200, 150, 100);
 			
 			if (canvas.addEventListener) {                // For all major browsers, except IE 8 and earlier
 				canvas.addEventListener("click", function(e) { 

@@ -195,7 +195,36 @@ function feedbackAnim(res, num) {
 	}
 }
 
+	function menuKeyProc(event, id) {
+		var x = event.keyCode;
+		switch(x){
+			case 13:
+				// 'enter' key was pressed
+				menuUpdate(id);
+				break;
+			case 37:
+				// 'left arrow' pressed
+				var next = (id>0)? id-1 : 3; 
+				vsetAnswerButtonFocus(next);
+				break;
+			case 39:
+				// 'right arrow' pressed
+				var next = (id<3)? id+1 : 0; 
+				vsetAnswerButtonFocus(next);
+				break;
+			default:
+				break;
+		}
+	}
 
+	// only works if game buttons have active selection, eg via tab key from the OS / browser window
+		// maybe init/force it on buttons for any mouse click on body?
+		//	var elem = document.activeElement;
+		//	console.log("The Unicode value is: ", x, elem.id, id);
+	function vsetAnswerButtonFocus(next) {
+		var nextelem = "a"+next;
+		document.getElementById(nextelem).focus(); 
+	}
 
 function vsetSceneBeforeElem(elemId, enable) {
 	var x1 = document.getElementById("scene");	
@@ -351,7 +380,8 @@ function vsetElemBlockDisplay(elem, enable) {
 
 return {
 	gameStart: gameInit,
-	checkAnswer: menuUpdate
+	checkAnswer: menuUpdate,
+	keyPress: menuKeyProc,
 }
 
 })();
