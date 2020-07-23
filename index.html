@@ -4,6 +4,7 @@
 <head>
     <title>M P quiz</title>
     <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
       body {
@@ -26,6 +27,7 @@
 	
 	<link rel="stylesheet" type="text/css" href="img/img.css">
 
+	<script src="data.js"></script>
 	<script src="scene.js"></script>
 	<script src="client.js"></script>
 
@@ -48,16 +50,16 @@
 		</div>
 		<p id="infotext">Click the answer:</p>
 		<div> 
-			<span id="a0" class="ib" onclick="checkAnswer(0)">&nbsp;<br />word</span> 
-			<span id="a1" class="ib" onclick="checkAnswer(1)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
-			<span id="a2" class="ib" onclick="checkAnswer(2)">&nbsp;<br />000</span>	
-			<span id="a3" class="ib" onclick="checkAnswer(3)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
+			<span id="a0" class="ib" onclick="mpclient.checkAnswer(0)">&nbsp;<br />word</span> 
+			<span id="a1" class="ib" onclick="mpclient.checkAnswer(1)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
+			<span id="a2" class="ib" onclick="mpclient.checkAnswer(2)">&nbsp;<br />000</span>	
+			<span id="a3" class="ib" onclick="mpclient.checkAnswer(3)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
 		</div>
 	</div>
 	
 	<script>
 		window.onload = function() {	  		
-		  gameStart();
+		  mpclient.gameStart();
 		}
 	</script>
   

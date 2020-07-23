@@ -1,4 +1,5 @@
 mpscene = (function () {
+	"use strict";
 
     // lots of code/definitions that have local scope
     var internallyDefinedItem1 = function (n) { 

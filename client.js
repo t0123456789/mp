@@ -1,69 +1,7 @@
+mpclient = (function () {
 "use strict";
 
-
-
-function menuInit(n){
-	
-	var defaultdata = { name:"default", steps:3, level:0, info:"This is a practice level for brain training + pet game. After completing this you will have earned some coins and see various options to relax with your pet or train some more!",
-		arr:[
-			{ q: "Hello! Which player?", opt:[ "( \\__/ )<br>( ᵔ ᴥ ᵔ )", "/\\.../\\<br>(o . o)", "&nbsp;<br>~{'v'}~", "( )__( )<br>( ᵔ ᴥ ᵔ )" ], a:0, val:0 },
-//			{ q: "2 x 3 = ?", opt:[ "5", "8", "6", '<img id="star" width="30" height="30" src="img/star.jpg">' ], a:2, val:6 },
-			{ q: "2 x 3 = ?", opt:[ "5", "8", "6", "23" ], a:2, val:6 },
-			{ q: "5 + ? = 10", opt:[ "1", "4", "8", "5" ], a:3, val:5 },
-			{ q: "7 x 8 = ?", opt:[ "48", "68", "56", "58" ], a:2, val:56 },
-			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
-		]};	
-		
-	var scenemenu = { name:"pets", steps:4, level:0, info:"This is the place to interact with your pet. (button links are not finished yet)",
-		arr:[
-			{ q: "Pets love to relax after training! Something to do?", opt:[ "back", "shop", "decor", "items" ], 
-																		to:[ 5, 4, 1, 2 ], a:0, val:0 },
-			{ q: "Change the view to floor or wall to arrange items", opt:[ "done", "floor", "wall", "normal" ], 
-																		to:[ 0, 2, 2, 2 ], a:0, val:0 },
-			{ q: "Click on an item to see more actions", opt:[ "done", "feed", "clean", "brush" ], 
-																		to:[ 0, 3, 3, 3 ], a:0, val:0 },
-			{ q: "What would you like to buy?", opt:[ "done", "food", "ball", "paint" ], 
-																		to:[ 0, 4, 4, 4 ], a:0, val:0 },
-			{ q: "What would you like to buy?", opt:[ "done", "food", "autoclean", "bow" ], 
-																		to:[ 0, 5, 5, 5 ], a:0, val:0 },
-			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
-		]};
-		
-	var compmenu = { name:"compete", steps:3, level:0, info:"test multi player",
-		arr:[
-			{ q: "Loading other players! Join a game?", opt:[ "back", "g1", "g2", "g3" ], a:0, val:0 },
-			{ q: "2 x 4 = ?", opt:[ "5", "8", "6", "23" ], a:1, val:8 },
-			{ q: "5 + ? = 9", opt:[ "1", "4", "8", "5" ], a:1, val:4 },
-			{ q: "6 x 8 = ?", opt:[ "48", "68", "56", "58" ], a:0, val:48 },
-			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
-		]};
-		
-	var quiz3 = { name:"quiz", steps:4, level:0, info:"This is a random example quiz.",
-		arr:[
-			{ q: "not showing this intro atm. choice of extra bufs/anything?...", opt:[ "0", "1", "2", "3" ], a:0, val:0 },
-			{ q: "2 x 3 = ?", opt:[ "5", "8", "6", "23" ], a:2, val:6 },
-			{ q: "2 x 3 = ?", opt:[ "5", "8", "6", "23" ], a:2, val:6 },
-			{ q: "5 + ? = 10", opt:[ "1", "4", "8", "5" ], a:3, val:5 },
-			{ q: "7 x 8 = ?", opt:[ "48", "68", "56", "58" ], a:2, val:56 },
-			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
-		]};
-		
-	if(n==1) { return scenemenu; }		
-	if(n==2) { return compmenu; }		
-	if(n==3) { return quiz3; }		
-	return defaultdata;
-}
-
-var client = {};
-client.t = 0;
-client.dt = 0;
-client.interdt = 500;
-client.maxstrike = 3;
-client.prog = { score:0, qnum:0, level:0, strike:0, acc:0, star:0, state:"none" };
-
-
-
-function gameStart(){
+	function gameInit(){
 	
 	var intervalId = setInterval(startTimer, client.interdt);
 	vsetIconHide();
@@ -75,6 +13,18 @@ function gameStart(){
 	setState("start");
 }
 
+	var client = {
+		t : 0,
+		dt : 0,
+		interdt : 500,
+		maxstrike : 3,
+		prog : { score:0, qnum:0, level:0, strike:0, acc:0, star:0, state:"none" }
+	}
+
+
+	function menuInit(n){
+		return window.mpdata.init.menu(n);
+	}
 
 function startTimer() {
 	var d = new Date();	
@@ -100,7 +50,7 @@ function startTimer() {
 	}
 }
 
-function checkAnswer(n){
+function menuUpdate(n){
 	var qn = client.prog.qnum;	
 	// js assign op: For primitive types, makes a copy with same value. For object, makes ref to same underlying data
 
@@ -205,12 +155,13 @@ function nextQuestion(){
 		vsetQA(client.prog.qnum);			
 		
 		if(client.prog.qnum==maxidx){
-			vsetAxStyle("ib");
 			setState("finish");
 			vsetBlockDisplay("infotext", true);
+			vsetAnswerButtonsActive(true, "ib");
+		} else {
+			vsetAnswerButtonsActive(true);
 		}
 	}
-	vsetAnswerButtonsActive(true);
 }
 
 function setState(s){
@@ -284,7 +235,7 @@ function vsetIconHide() {
 	//i.style.display = "none";
 } 
 
-function vsetAnswerButtonsActive(enable) {
+	function vsetAnswerButtonsActive(enable, skin) {
 	var maxi = 4;	
 	var i;
 	for( i = 0; i < maxi; i++){ 
@@ -294,7 +245,7 @@ function vsetAnswerButtonsActive(enable) {
 			//document.getElementById(idstr).onclick = function() { checkAnswer(i); }; 
 			// js lambda scope is function-level, not block-level, so context when fn is created is at end of scope, then function-level variable i has the value 5. Fix: add createfn(i) or wrap in extra closure...
 			document.getElementById(idstr).onclick = (function(tmp) { 
-												return function() { checkAnswer(tmp); }
+													return function() { mpclient.checkAnswer(tmp); }
 											})(i);
 		} else {
 			document.getElementById(idstr).onclick = null;
@@ -303,10 +254,18 @@ function vsetAnswerButtonsActive(enable) {
 	
 	if(enable) {
 		vsetIconHide();
+			if(skin) {
+				vsetAxStyle(skin);
+			} else {
 		vsetAxStyle("coin");
+			}
 		vsetIS("click");
 	} else {
-		vsetAxStyle("coin greyout");
+			if(skin) {
+				vsetAxStyle(skin);
+			} else {
+				vsetAxStyle("coin coingreyout");
+			}
 	}
 
 }
@@ -389,3 +348,10 @@ function vsetElemBlockDisplay(elem, enable) {
   }
   //elem.style.display = (enable)? "block":"none";  
 } 
+
+return {
+	gameStart: gameInit,
+	checkAnswer: menuUpdate
+}
+
+})();
