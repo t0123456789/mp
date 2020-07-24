@@ -18,6 +18,7 @@ mpclient = (function () {
 		dt : 0,
 		interdt : 500,
 		maxstrike : 3,
+		pet: 0,
 		prog : { score:0, qnum:0, level:0, strike:0, acc:0, star:0, state:"none" }
 	}
 
@@ -56,6 +57,7 @@ function menuUpdate(n){
 
 	switch(getState()) {
 	case "start":
+		vsetPlayerPet(n);
 		vsetIS("reset");
 		vsetAxStyle("coin");
 		setState("ready");
@@ -178,17 +180,17 @@ function feedbackAnim(res, num) {
 	
 	switch(res) {
 		case "correct":
-			msg = "Correct!  +"+num+" coins.";
+			msg = '<span style="color:rgb(0,150,0);">Correct!  +'+num+' coins.</span>';
 			vsetIS(msg);
 			setTimeout(nextQuestion, waitms);
 			break;
 		case "again":
-			msg = "Whoops, think again.  +"+num+" more chances.";
+			msg = '<span style="color:rgb(200,130,70);">Whoops, think again.  +'+num+' more chances.</span>';
 			vsetIS(msg);
 			setTimeout(function(){ vsetAnswerButtonsActive(true); } , waitms);
 			break;	
 		case "fail":
-			msg = "Wrong answer.  Let's move on...";
+			msg = '<span style="color:rgb(150,0,0);">Wrong answer. Better move on...</span>';
 			vsetIS(msg);
 			setTimeout(nextQuestion, waitms);
 			break;			
@@ -217,6 +219,11 @@ function feedbackAnim(res, num) {
 		}
 	}
 
+	function vsetPlayerPet(n) {
+		client.pet = n;
+	}
+
+
 	// only works if game buttons have active selection, eg via tab key from the OS / browser window
 		// maybe init/force it on buttons for any mouse click on body?
 		//	var elem = document.activeElement;
@@ -230,7 +237,7 @@ function vsetSceneBeforeElem(elemId, enable) {
 	var x1 = document.getElementById("scene");	
 	if(!x1){
 		var x2 = document.getElementById(elemId);
-		x2.insertAdjacentHTML('beforebegin', '<div id="scene"><canvas id="canvas" width="300" height="300">Your browser does not support the HTML5 canvas tag.</canvas></div>');	
+			x2.insertAdjacentHTML('beforebegin', '<div id="scene"><canvas id="canvas" width="420" height="300">Your browser does not support the HTML5 canvas tag.</canvas></div>');	
 		x1 = document.getElementById("scene");	
 
 		vsetSceneDraw();

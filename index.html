@@ -34,9 +34,11 @@
 </head>
 
 <body>
+	<div id="header" style="height:15px"></div>
   
 	<div style="font-size:24px;max-width:430px;margin-left:auto;margin-right:auto;">		
-		<div style="height:40px;">	
+		
+		<div style="height:30px;">	
 			<p id="scoretext"> </p>
 		</div>	
 		<div style="height:55px;">
@@ -57,6 +59,9 @@
 		</div>
 	</div>
 	
+	<div id="footer" style="height:15px"></div>
+
+	
 	<script>
 		window.onload = function() {	  		
 		  mpclient.gameStart();
@@ -65,12 +70,13 @@
   
 	<div id="statustext" style="display:none">
 		<div style="width:500px;height:30px"></div>
-		<div id="dbgtimer" style="width:300px;height:30px;border:1px solid #000;">300x30px</div>
 
 		<img id="star" class="hiddeninit" src="img/star.jpg" alt="A star">
 		<img id="heart" class="hiddeninit" src="img/heart.png" alt="A heart">
 		<img id="alphacoins" class="hiddeninit" src="img/alpha.png" alt="coins">
 		<img id="p0" class="hiddeninit" src="img/p0.jpg" alt="player 0">
+
+		<div id="dbgtimer" style="width:300px;height:30px;border:1px solid #000;">300x30px</div>
 
 		<p id="error"> </p>
 		<p id="debug"> </p>	

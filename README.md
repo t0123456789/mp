@@ -3,6 +3,8 @@ permalink: /index.html
 ---
 
 
+
+
 # mp game
 
 # A mix of brain training and pet sim.
@@ -10,11 +12,45 @@ permalink: /index.html
 Stay smart and improve your mental math skills,
 practice is even more fun when you earn coins and  buff your pet.
 
+
+
+# Making a copy of this game on your own machine
+
+After doing this you can play the game without being online.
+You can also edit your copy to create and test your own version of this game.
+
+Download the files for this game from github:
+	https://github.com/t0123456789/mp
+
+-Open the link, it shows all the files in this game.
+-Click the green 'Code' button and select 'Download ZIP' option.
+-Your browser will save it to your machine, the default file name is 'mp-master.zip' by default.
+-Unzip the file, there should be a folder containing all the files you saw earlier.
+-click/open the file called index.html
+-Your default web browser should open a page with the game running, using the files in that folder on your machine.
+
+
+# Changing the artwork
+
+All the files are in the 'img' folder.
+You can edit in whatever edit tool and save the original in any format or size, then export to smaller jpg or png (if alpha channel is needed).
+I got test images from Google image search, photos from my mobile and screenshot Snipping Tool in Windows.
+I edited image files using Gimp (can be installed from https://www.gimp.org/downloads/)
+Do a quick test first just incase...
+
+
+# Changing menu and quiz data:
+
+The initial questions and answers are in the file called data.js
+
+
+
+
 # Works on many devices, Play with less environmental impact
 
 This game aims to support many old devices and  browser versions, offline play for unreliable internet connections and simple open source code. 
 
-Work is in progress... but the idea is to support using some older legacy devices, saving them from the landfill and saving you the money and carbon footprint of upgrading.
+Work is in progress, including this readme file... but the idea is to support using some older legacy devices, saving them from the landfill and saving you the money and carbon footprint of upgrading.
 
 
 To play your own local version, just download a copy and open the index.html in your browser.
@@ -25,9 +61,11 @@ Its also possible to edit your copy to create and share your own modified game v
 It should work on any current web browsers on desktop, laptop, tablet/mobile/other devices, and is being developed to avoid known issues with older draft and legacy standards and unsupported features.
 
 It has been checked and works on some old mobiles and tablets including:
- Android devices with 
+ Android device with 
  1st generation ipad 
  iphone 4
+ WiiU
+ PSVita
 
 
 # Security and privacy

@@ -1,31 +1,6 @@
 mpscene = (function () {
 	"use strict";
 
-    // lots of code/definitions that have local scope
-    var internallyDefinedItem1 = function (n) { 
-		console.log("internallyDefinedItem1 input: ", n); 
-		return " ok-internallyDefinedItem1:"+n;
-		}
-    var internallyDefinedItem2 = {
-        foo: internallyDefinedItem1(532),
-        bar: totallyPrivateNeverExportedFunction(17)
-    }
-    var totallyPrivateNeverExportedVar = 'blahblahblah';
-    function totallyPrivateNeverExportedFunction (x) {
-       console.log("totallyPrivateNeverExportedFunction input: ", x); 
-	   return " ok-totallyPrivateNeverExportedFunction:"+x;
-    }
-
-// when internallyDefinedItem2 is instatiated, both local scope fns run 
-// can global call to exportedItem1(99) runs internal fn
-// can global access value of exportedItem2.foo=..., exportedItem2.bar=ok17
-
-/*    return {
-        exportedItem1: internallyDefinedItem1,
-        exportedItem2: internallyDefinedItem2
-    }*/
-	
-	
 			var input = {
 			rx: 0,
 			ry: 0,           
@@ -39,14 +14,61 @@ mpscene = (function () {
 			input.mx = e.clientX;
 			input.my = e.clientY;
 			var mstr = "mousemove: "+ input.mx +","+ input.my;
-			printFunction(e, mstr);
+		printClickEvent(e, mstr);
 		}
+
 		var count = 0;
 		var ecount = 0;
 
+	var initParams = {
+		cvs: null,
+		ctx: null,
+	}
+
+	function checkParams(canvas, ctx) {
+		if(!canvas || !ctx) {
+			printError("bad canvas params");
+			return false;
+		}
+		if(!initParams.cvs) {
+			printDebug("set first canvas");
+		} else if(initParams.cvs!==canvas){
+			printDebug("resetting canvas");
+		}
+		initParams.cvs = canvas;
+		initParams.w = canvas.width;
+		initParams.h = canvas.height;
+
+		if(!initParams.ctx) {
+			initParams.ctx = ctx;
+			printDebug("set first context");
+		} else if(initParams.ctx!==ctx){
+			printDebug("resetting context");
+		}
+		initParams.ctx = ctx;
+
+		return true;
+	}
+
 		
 	var drawScene =	function(canvas, ctx){
+			var ok = checkParams(canvas, ctx);
+			if(!ok) return;
 		
+			drawTestScene(ctx);
+
+			addClickInput(canvas);			
+		}
+
+	function saveToFile(canvas) {
+		var dataURL = canvas.toDataURL();
+		var fullQuality = canvas.toDataURL('image/jpeg', 1.0);
+		// data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ...9oADAMBAAIRAxEAPwD/AD/6AP/Z"
+		var mediumQuality = canvas.toDataURL('image/jpeg', 0.5);
+		var lowQuality = canvas.toDataURL('image/jpeg', 0.1);
+	}
+
+	function drawTestScene(ctx) {
 			// filled, erased then outlined
 			ctx.fillStyle = 'rgb(0, 255, 0)';
 			ctx.fillRect(25, 25, 100, 100);
@@ -68,21 +90,20 @@ mpscene = (function () {
 			ctx.fillRect(150, 0, 150, 200);
 		
 			// images
-
-			//var img = document.getElementById('icon').getElementsByTagName('background-image')[0];
 			var img = document.getElementById("alphacoins");
 			ctx.drawImage(img, 150, 150);
-			//ctx.drawImage(img, 150, 200, 150, 100);
+	}
 			
+	function addClickInput(canvas) {
 			if (canvas.addEventListener) {                // For all major browsers, except IE 8 and earlier
 				canvas.addEventListener("click", function(e) { 
 					updateInputCanvasXY(e);
-					printFunction(e, "addEventListener clicked"); 
+				printClickEvent(e, "addEventListener clicked"); 
 				} );
 			} else if (canvas.attachEvent) {              // For IE 8 and earlier versions
 				canvas.attachEvent("onclick", function(e) { 
 					updateInputCanvasXY(e);
-					printFunction(e, "attachEvent clicked"); } );
+				printClickEvent(e, "attachEvent clicked"); } );
 			} else {
 				printError("canvas.addEventListener or canvas.attachEvent NOT supported.");
 			}			
@@ -99,14 +120,20 @@ mpscene = (function () {
 				input.cx = e.clientX - input.rx;
 				input.cy = e.clientY - input.ry;
 			}
-		}
 		
-		function printFunction(e, src) {
+		function printClickEvent(e, src) {
 			if(!document.getElementById("debug")) return;
 			var position = " x,y: "+input.cx+","+input.cy+" exy: "+e.clientX+","+e.clientY + " canvasxy: "+input.rx+","+input.ry;
 			document.getElementById("debug").innerHTML = "debug print "+ count + ": "+ src + position;
 			count++;
 		}	
+	}		
+		
+	function printDebug(src) {
+		if(!document.getElementById("debug")) return;
+		document.getElementById("debug").innerHTML = "debug print "+ count + ": "+ src;
+		count++;
+	}
 
 		function printError(src) {
 			if(!document.getElementById("error")) return;

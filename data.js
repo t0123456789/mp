@@ -1,3 +1,12 @@
+// The game menu and quiz text is defined in this file
+// this file is writen in Javascript which is a programming language.
+// but you don't need to know how to program to just change the text in the menus,
+// you can just edit the text in a normal text editor.
+// It creates some Javascript objects, so when editing basically leave the layout of outer brackets etc the same. 
+
+// In Javascript a line which starts with double slashes like this one is a comment
+// we can write anything in a comment and it does not affect the code when your computer reads it.
+
 (function() {
     "use strict";
 
@@ -17,7 +26,12 @@
         defaultdata: { name:"default", steps:3, level:0, info:"This is a practice level for brain training + pet game. After completing this you will have earned some coins and see various options to relax with your pet or train some more!",
 		arr:[
 			{ q: "Hello! Which player?", opt:[ "( \\__/ )<br>( ᵔ ᴥ ᵔ )", "/\\.../\\<br>(o . o)", "&nbsp;<br>~{'v'}~", "( )__( )<br>( ᵔ ᴥ ᵔ )" ], a:0, val:0 },
-//			{ q: "2 x 3 = ?", opt:[ "5", "8", "6", '<img id="star" width="30" height="30" src="img/star.jpg">' ], a:2, val:6 },
+//			{ q: "Hello! Which player?", opt:[ 
+//                '<img id="p0" width="80" height="80" src="img/p0.jpg">', 
+//                '<img id="p1" width="80" height="80" src="img/p1.jpg">', 
+//                '<img id="p2" width="80" height="80" src="img/p2.jpg">', 
+//                '<img id="p3" width="80" height="80" src="img/p3.jpg">' ], 
+//                a:0, val:0 },
 			{ q: "2 x 3 = ?", opt:[ "5", "8", "6", "23" ], a:2, val:6 },
 			{ q: "5 + ? = 10", opt:[ "1", "4", "8", "5" ], a:3, val:5 },
 			{ q: "7 x 8 = ?", opt:[ "48", "68", "56", "58" ], a:2, val:56 },
