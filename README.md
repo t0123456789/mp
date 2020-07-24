@@ -22,12 +22,12 @@ You can also edit your copy to create and test your own version of this game.
 Download the files for this game from github:
 	https://github.com/t0123456789/mp
 
--Open the link, it shows all the files in this game.
--Click the green 'Code' button and select 'Download ZIP' option.
--Your browser will save it to your machine, the default file name is 'mp-master.zip' by default.
--Unzip the file, there should be a folder containing all the files you saw earlier.
--click/open the file called index.html
--Your default web browser should open a page with the game running, using the files in that folder on your machine.
+- Open the link, it shows all the files in this game.
+- Click the green 'Code' button and select 'Download ZIP' option.
+- Save it to your machine, your browser will probably put it in your usual Downloads place with the default file name: mp-master.zip
+- Unzip the file, there should be a folder containing all the files you saw earlier.
+- Click/Open the file called index.html
+- Your default web browser should open a page with the game running, using the files in that folder on your machine.
 
 
 # Changing the artwork
@@ -61,11 +61,11 @@ Its also possible to edit your copy to create and share your own modified game v
 It should work on any current web browsers on desktop, laptop, tablet/mobile/other devices, and is being developed to avoid known issues with older draft and legacy standards and unsupported features.
 
 It has been checked and works on some old mobiles and tablets including:
- Android device with 
- 1st generation ipad 
- iphone 4
- WiiU
- PSVita
+- Android device with 
+- 1st generation ipad 
+- iphone 4
+- WiiU
+- PSVita
 
 
 # Security and privacy
