@@ -17,6 +17,7 @@ practice is even more fun when you earn coins and  buff your pet.
 # Making a copy of this game on your own machine
 
 After doing this you can play the game without being online.
+You will need access to the your download machine's file system, a way to open zip files and a web browser. 
 You can also edit your copy to create and test your own version of this game.
 
 Download the files for this game from github:
@@ -59,18 +60,21 @@ Its also possible to edit your copy to create and share your own modified game v
 
 
 It should work on any current web browsers on desktop, laptop, tablet/mobile/other devices, and is being developed to avoid known issues with older draft and legacy standards and unsupported features.
+Many old devices such as PCs are not legacy ones if the web browser software can be updated to a current version. In this case the game should work fine.
 
-It has been checked and works on some old mobiles and tablets including:
-- Android device with 
-- 1st generation ipad 
-- iphone 4
-- WiiU
-- PSVita
+It has been checked and works on some legacy mobiles, consoles and tablets including:
+(Legacy devices can not be updated, there are no more system updates and may lack it support from the manufacturer, official app stores etc.)
+  
+ 1st generation iPad (the one with no camera), iOS 5 + Safari 5.1
+ iPhone 4, iOS 9 + Safari 9
+ Moto G phone, Android 7 + Chrome 84 or Firefox 11
+ WiiU + default web browser
+ PSVita + default web browser
 
 
 # Security and privacy
 
-If you are playing on a legacy browser, please be aware that there have been no security updates to your operating system or software. This means you should not trust it to be secure when you are accessing private information, do not login to your bank account using that device!
+If you are playing on a legacy browser, please be aware that security updates are no longer provided for your operating system or software. This means you should not trust it to be secure when you are accessing private information, do not login to your bank account using that device!
 
 This game does not require a login or any personal details or track your data. You can inspect the source code to see exactly what is being accessed on your machine.
 

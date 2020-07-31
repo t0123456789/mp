@@ -23,7 +23,8 @@
             return this.defaultdata;
         },
 
-        defaultdata: { name:"default", steps:3, level:0, info:"This is a practice level for brain training + pet game. After completing this you will have earned some coins and see various options to relax with your pet or train some more!",
+        defaultdata: { name:"default", steps:3, level:0, 
+        help:"This is a practice level for brain training + pet game. After completing this you will have earned some coins and see various options to relax with your pet or train some more!",
 		arr:[
 			{ q: "Hello! Which player?", opt:[ "( \\__/ )<br>( ᵔ ᴥ ᵔ )", "/\\.../\\<br>(o . o)", "&nbsp;<br>~{'v'}~", "( )__( )<br>( ᵔ ᴥ ᵔ )" ], a:0, val:0 },
 //			{ q: "Hello! Which player?", opt:[ 
@@ -38,7 +39,8 @@
 			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
 		]},
 		
-	    scenemenu: { name:"pets", steps:4, level:0, info:"This is the place to interact with your pet. (button links are not finished yet)",
+        scenemenu: { name:"pets", steps:4, level:0, 
+        help:"This is the place to interact with your pet. (button links are not finished yet)",
 		arr:[
 			{ q: "Pets love to relax after training! Something to do?", opt:[ "back", "shop", "decor", "items" ], 
 																		to:[ 5, 4, 1, 2 ], a:0, val:0 },
@@ -53,16 +55,18 @@
 			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
 		]},
 		
-	    compmenu: { name:"compete", steps:3, level:0, info:"test multi player",
+        compmenu: { name:"compete", steps:3, level:0, 
+        help:"test multi player with 3 ai players, get bonus coins depending on difficulty & position.",
 		arr:[
-			{ q: "Loading other players! Join a game?", opt:[ "back", "g1", "g2", "g3" ], a:0, val:0 },
+			{ q: "Loading other players! Join a game?", opt:[ "back", "easy", "medium", "hard" ], a:0, val:0 },
 			{ q: "2 x 4 = ?", opt:[ "5", "8", "6", "23" ], a:1, val:8 },
 			{ q: "5 + ? = 9", opt:[ "1", "4", "8", "5" ], a:1, val:4 },
 			{ q: "6 x 8 = ?", opt:[ "48", "68", "56", "58" ], a:0, val:48 },
 			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
 		]},
 		
-	    quiz3: { name:"quiz", steps:4, level:0, info:"This is an example quiz.",
+        quiz3: { name:"quiz", steps:4, level:0, 
+        help:"This is an example quiz.",
 		arr:[
 			{ q: "not showing this intro atm. choice of extra bufs/anything?...", opt:[ "0", "1", "2", "3" ], a:0, val:0 },
 			{ q: "9 x 3 = ?", opt:[ "27", "28", "21", "23" ], a:0, val:27 },

@@ -90,7 +90,7 @@ mpscene = (function () {
 			ctx.fillRect(150, 0, 150, 200);
 		
 			// images
-			var img = document.getElementById("alphacoins");
+		var img = document.getElementById("imgalpha");
 			ctx.drawImage(img, 150, 150);
 	}
 			
@@ -121,12 +121,6 @@ mpscene = (function () {
 				input.cy = e.clientY - input.ry;
 			}
 		
-		function printClickEvent(e, src) {
-			if(!document.getElementById("debug")) return;
-			var position = " x,y: "+input.cx+","+input.cy+" exy: "+e.clientX+","+e.clientY + " canvasxy: "+input.rx+","+input.ry;
-			document.getElementById("debug").innerHTML = "debug print "+ count + ": "+ src + position;
-			count++;
-		}	
 	}		
 		
 	function printDebug(src) {
@@ -141,6 +135,13 @@ mpscene = (function () {
 			ecount++;
 			console.log(src);
 		}		
+	
+	function printClickEvent(e, src) {
+		if(!document.getElementById("debug")) return;
+		var position = " x,y: "+input.cx+","+input.cy+" exy: "+e.clientX+","+e.clientY + " canvasxy: "+input.rx+","+input.ry;
+		document.getElementById("debug").innerHTML = "debug print "+ count + ": "+ src + position;
+		count++;
+	}	
 
 
 return {

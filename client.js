@@ -1,3 +1,5 @@
+window.mpgame = {};
+
 mpclient = (function () {
 "use strict";
 
@@ -11,6 +13,8 @@ mpclient = (function () {
 	vsetBlockDisplay("player", false);
 	vsetQA(0);
 	setState("start");
+
+		mpmodal();
 }
 
 	var client = {
@@ -19,7 +23,8 @@ mpclient = (function () {
 		interdt : 500,
 		maxstrike : 3,
 		pet: 0,
-		prog : { score:0, qnum:0, level:0, strike:0, acc:0, star:0, state:"none" }
+		prog: { score:0, qnum:0, level:0, strike:0, acc:0, star:0, state:"none", startms:0 },
+		multiplayCb: null,
 	}
 
 
@@ -27,13 +32,24 @@ mpclient = (function () {
 		return window.mpdata.init.menu(n);
 	}
 
+function menuHelpText() {
+	return client.quiz.help;
+}
+
 function startTimer() {
+	// update current time in ms and the time elapsed since last timedUpdate
 	var d = new Date();	
 	var ms = d.getTime();	// millisecs since midnight January 1 1970
 	if(client.t) {
-		client.dt = client.t-ms;
+		client.dt = ms-client.t;
 	}
 	client.t = ms;
+	//console.log("timer: ", ms);
+
+	if(client.multiplayCb) {
+		client.multiplayCb(client.dt);
+	}
+
 	
 	if(document.getElementById('dbgtimer')){
 		var h = d.getHours();
@@ -62,6 +78,14 @@ function menuUpdate(n){
 		vsetAxStyle("coin");
 		setState("ready");
 		nextQuestion();
+		break;
+	case "startmp":
+		// get opponents
+		if(multiplayInit(n)) {
+			vsetAxStyle("coin");
+			setState("ready");
+			nextQuestion();
+		}
 		break;
 	case "finish":
 		switch(n) {
@@ -97,14 +121,14 @@ function menuUpdate(n){
 				vsetSceneBeforeElem("qdiv", true);
 				break;
 			case 3:
-				// multi player, get level & opponents
+				// multi player
 				client.quiz = menuInit(2);
-				client.prog.qnum = 1;
+				client.prog.qnum = 0;
 				vsetBlockDisplay("qdiv", true);
 				vsetSceneBeforeElem("qdiv", false);
-				vsetAxStyle("coin");
+				vsetAxStyle("ib");
 				vsetQA(0);
-				setState("ready");
+				setState("startmp");
 				break;
 			default:
 				break;
@@ -157,6 +181,9 @@ function nextQuestion(){
 		vsetQA(client.prog.qnum);			
 		
 		if(client.prog.qnum==maxidx){
+			if(multiplayActive()) {
+				multiplayFinish();
+			}
 			setState("finish");
 			vsetBlockDisplay("infotext", true);
 			vsetAnswerButtonsActive(true, "ib");
@@ -173,6 +200,150 @@ function getState(){
 	return client.prog.state;
 }
 
+function multiplayInit(n) {
+
+	if(n==0) {
+		// user pressed 'back' button 
+		// don't setup any multiplay & jump to end of quiz menu
+		client.prog.qnum=client.quiz.arr.length-1;
+		vsetQA(client.prog.qnum);
+		setState("finish");
+		vsetBlockDisplay("infotext", true);
+		vsetAnswerButtonsActive(true, "ib");
+		return false;
+	}
+
+	// syncronise start time for all players
+	client.prog.startms = client.t;
+
+	// setup ai players...
+	var diff = [0,n-1,n];
+	shuffle(diff);
+	var allpets = [0,1,2,3];
+	var oppopet = removeVal(allpets, client.pet);
+	shuffle(oppopet);
+	client.p1 = new window.mpgame.aiPlayer(0, oppopet[0], 0);
+	client.p2 = new window.mpgame.aiPlayer(n-1, oppopet[1], 0);
+	client.p3 = new window.mpgame.aiPlayer(n, oppopet[2], 0);
+
+	var aiplayer = [client.p1, client.p2, client.p3];
+
+	var i;
+	for(i=0; i<3; ++i) {
+		//aiplayer[i] = new window.mpgame.aiPlayer(diff[i], oppopet[i], 0);
+		aiplayer[i].prog = { strike:0, qnum:1, qsteps:client.quiz.steps, penalty:0, state:"ready", startms:client.t, time:0 };
+	}
+
+	vsetOpponentCards(true, true);
+
+	client.multiplayCb = function(dt) {
+		var arr = [ { p:client.p1, id:"qnum1"}, { p:client.p2, id:"qnum2"}, { p:client.p3, id:"qnum3"}, ];
+		var n;
+		var j;
+		for(j=0; j<3; ++j) {
+			n = arr[j].p.update(dt);
+			if(multiplayProgUpdate(arr[j].p, n)) {
+				vsetCard(arr[j].id, arr[j].p);
+			}
+		}
+	
+		// n = client.p1.update(dt);
+		// console.log("multiplayCb", n);
+		// if(multiplayProgUpdate(client.p1, n)) {
+		// 	vsetCard("qnum1", client.p1);
+		// }
+	}
+
+	function shuffle(array){
+		// loop each element in array in reverse order
+		var i;
+		for (i = array.length - 1; i > 0; i--) {
+			// pickup a random element before this element and swap them
+			var j = Math.floor(Math.random() * i);
+			var temp = array[i];
+			array[i] = array[j];
+			array[j] = temp;
+		}
+	};
+
+	function removeVal(array, val){
+		var arr = [];
+		var i;
+		for (i=0; i <= array.length - 1; ++i) {
+			if(array[i]!==val) arr.push(array[i]);
+		}
+		return arr;
+	};
+
+	function multiplayProgUpdate(player, n) {
+		if(n==-1) return false;
+		if(player.prog.state == "finish") return false;
+		
+		console.log("multiplayProgUpdate: ", player.prog.qnum, client.maxstrike);
+		if(n==-2) {
+			player.prog.qnum++; player.prog.strike=0;
+		} else {
+			var q = client.quiz.arr[player.prog.qnum];
+			if(q.a==n) {
+				player.prog.qnum++;
+			} else {
+				player.prog.strike++;
+				if(player.prog.strike==client.maxstrike){
+					player.prog.qnum++;
+					player.prog.penalty++;
+					player.prog.strike=0;
+				}
+			}
+		}
+
+		if(player.prog.qnum>player.prog.qsteps) {
+			player.prog.qnum=player.prog.qsteps;
+			player.prog.state = "finish";
+			player.prog.time = client.t - player.prog.startms; 
+		}
+		return true;	
+	};
+
+	return true;
+}
+
+function multiplayActive() {
+	return (client.multiplayCb)? true:false;
+}
+
+function multiplayFinish() {
+	client.multiplayCb = null;
+		// show some sort of result in modal dialog / feedback anim...
+
+	vsetOpponentCards(false, false);
+}
+
+
+function vsetOpponentCards(enable, update) {
+	console.log("vsetOpponentCards", client.p1.prog.qnum);
+	var eopp = document.getElementById("oppo");
+	if(!enable) {
+		eopp.style.display="none";
+		return;
+	} 
+
+	eopp.style.display="inline-block";
+
+	if(update) {
+		// set progress info for each opponent
+		vsetCard("qnum1", client.p1);
+		vsetCard("qnum2", client.p2);
+		vsetCard("qnum3", client.p3);
+	}
+}
+
+function vsetCard(id, player) {
+	var e = document.getElementById(id);
+	var txt = player.prog.qnum+"/"+player.prog.qsteps;
+	e.innerText = txt;
+}
+
+
 function feedbackAnim(res, num) {
 	var waitms = 1000;
 	vsetAnswerButtonsActive(false);
@@ -185,12 +356,12 @@ function feedbackAnim(res, num) {
 			setTimeout(nextQuestion, waitms);
 			break;
 		case "again":
-			msg = '<span style="color:rgb(200,130,70);">Whoops, think again.  +'+num+' more chances.</span>';
+			msg = '<span style="color:rgb(200,130,70);">Whoops!  '+num+' chances left.</span>';
 			vsetIS(msg);
 			setTimeout(function(){ vsetAnswerButtonsActive(true); } , waitms);
 			break;	
 		case "fail":
-			msg = '<span style="color:rgb(150,0,0);">Wrong answer. Better move on...</span>';
+			msg = '<span style="color:rgb(200,0,0);">Wrong answer. Move on...</span>';
 			vsetIS(msg);
 			setTimeout(nextQuestion, waitms);
 			break;			
@@ -237,7 +408,7 @@ function vsetSceneBeforeElem(elemId, enable) {
 	var x1 = document.getElementById("scene");	
 	if(!x1){
 		var x2 = document.getElementById(elemId);
-			x2.insertAdjacentHTML('beforebegin', '<div id="scene"><canvas id="canvas" width="420" height="300">Your browser does not support the HTML5 canvas tag.</canvas></div>');	
+			x2.insertAdjacentHTML('beforebegin', '<div id="scene"><canvas id="canvas" width="320" height="200">Your browser does not support the HTML5 canvas tag.</canvas></div>');	
 		x1 = document.getElementById("scene");	
 
 		vsetSceneDraw();
@@ -389,6 +560,7 @@ return {
 	gameStart: gameInit,
 	checkAnswer: menuUpdate,
 	keyPress: menuKeyProc,
+	contextHelpText: menuHelpText,
 }
 
 })();

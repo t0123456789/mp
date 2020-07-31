@@ -1,27 +1,17 @@
-
 span.coin {
 	position: relative;
 	display: inline-block;
-	width: 100px;
-	height: 100px;
+	width: 73px;
+	height: 73px;
 	padding: 0px;
 	text-align: center;
 	vertical-align: middle;
-	line-height: 100px;
+	line-height: 72px;
 	background-image: url('coin.png');	
 	background-size: contain;	
 	z-index: 1;
 	pointer-events: auto;
 }
-
-/*
-span.coin:active {
-	background-image: linear-gradient(to bottom, rgba(0, 255, 0, 0.5), rgba(0, 255, 0, 0.5)), url("coin.png");
-}
-span.coin:hover {
-	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("coin.png");
-}
-*/
 
 span.coingreyout {
 	pointer-events: none;
@@ -48,6 +38,55 @@ span.card {
 	line-height: 50px;
 }
 
+span.prog {
+	display: inline-block;
+	width: 40px;
+	height: 50px;
+	padding: 0px;
+	vertical-align: middle;
+	line-height: 50px;
+	font-size:14px;
+}
+
+div.smallface {			
+	width:32px;
+	height:32px;
+	margin-left:auto;
+	margin-right:auto;
+	background-color: rgb(216, 163, 218); 
+}
+div.smallqnum {			
+	width:32px;
+	height:16px;
+	margin-left:auto;
+	margin-right:auto;
+	border:1px solid #000;
+	line-height: 14px;
+	vertical-align: middle;
+}
+div.smallstep {
+	width:10px;
+	height:2px;
+	margin-left:auto;
+	margin-right:auto;
+	border: 1px solid #000 ;
+
+}
+div.smallmarker {
+	width:20px;
+	height:3px;
+	margin-left:auto;
+	margin-right:auto;
+	border:1px solid #000;
+	font-size: 10px;
+	line-height: 8px;
+	vertical-align: middle;
+}
+
+span.hiddeninit {
+	display: none;
+}
+
 div.abs {
 	position: absolute;
 	top: 50px;
@@ -56,9 +95,11 @@ div.abs {
 	height: 50px;
 	background-size: contain;
 }
+
 div.tick {
 	background-image: url('tick.png');	
 }
+
 div.cross {
 	background-image: url('cross.png');	
 }
