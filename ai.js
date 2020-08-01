@@ -4,7 +4,7 @@ window.mpgame.aiPlayer = function(difficulty, pet, level) {
     this.diff = difficulty;     // randompick = 0, easy=1, med=2, hard=3
     this.acc = this.diff*0.3;       // 0->1 chance of knowing correct answer
     this.level = level;
-    this.speed = 2500-(this.diff*400);          // approx. ms delay before answer     
+    this.speed = 9000-(this.diff*2000);          // approx. ms delay before answer     
     this.time = 0;
     this.prevAnsTime = 0;
 

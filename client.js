@@ -21,15 +21,20 @@ mpclient = (function () {
 		t : 0,
 		dt : 0,
 		interdt : 500,
+		feedbackColor: ["rgb(0,150,0)","rgb(200,130,70)","rgb(200,0,0)"],
 		maxstrike : 3,
 		pet: 0,
-		prog: { score:0, qnum:0, level:0, strike:0, acc:0, star:0, state:"none", startms:0 },
+		prog: { score:0, qnum:0, qsteps:0, feedback:0, level:0, strike:0, acc:0, star:0, state:"none", startms:0 },
 		multiplayCb: null,
 	}
 
 
 	function menuInit(n){
-		return window.mpdata.init.menu(n);
+		var menu = window.mpdata.init.menu(n);
+		client.prog.qnum = 0;
+		client.prog.qsteps = menu.steps;
+		vsetProgbar("prog0", client, true);
+		return menu;
 	}
 
 function menuHelpText() {
@@ -95,7 +100,7 @@ function menuUpdate(n){
 				vsetBlockDisplay("player", false);
 				vsetBlockDisplay("qdiv", true);
 				vsetSceneBeforeElem("qdiv", false);
-				client.prog.qnum = 0;
+				//client.prog.qnum = 0;
 				vsetAxStyle("ib");
 				vsetQA(0);
 				setState("start");
@@ -114,7 +119,7 @@ function menuUpdate(n){
 				// show canvas scene
 				setState("pet");
 				client.quiz = menuInit(1);
-				client.prog.qnum = 0;
+				//client.prog.qnum = 0;
 				vsetAxStyle("ib");
 				vsetQA(0);
 				vsetBlockDisplay("qdiv", false);
@@ -123,7 +128,7 @@ function menuUpdate(n){
 			case 3:
 				// multi player
 				client.quiz = menuInit(2);
-				client.prog.qnum = 0;
+				//client.prog.qnum = 0;
 				vsetBlockDisplay("qdiv", true);
 				vsetSceneBeforeElem("qdiv", false);
 				vsetAxStyle("ib");
@@ -144,8 +149,7 @@ function menuUpdate(n){
 		vsetIS();
 		break;
 	case "pet":
-		var q = client.quiz.arr[qn];
-		nextQuestion();
+		nextAction(n);
 		vsetIS();
 		break;
 	}
@@ -158,6 +162,7 @@ function menuUpdate(n){
 		}
 		client.prog.score += inc;
 		vsetIconOnAnswer("abs tick", n);
+		client.prog.feedback=0;
 		feedbackAnim("correct", inc);
 	}
 	
@@ -166,9 +171,27 @@ function menuUpdate(n){
 		vsetIconOnAnswer("abs cross", n);
 		if(client.prog.strike==client.maxstrike){
 			client.prog.strike=0;
+			client.prog.feedback=2;
 			feedbackAnim("fail");
 		} else {	
+			client.prog.feedback=1;	
 			feedbackAnim("again", client.maxstrike-client.prog.strike);
+		}
+	}
+}
+
+function nextAction(n){	
+	var q = client.quiz.arr[client.prog.qnum];
+	var next = q.to[n];
+	client.prog.qnum=next;
+	var maxidx = client.quiz.arr.length-1;
+	vsetIconHide();
+	if(client.prog.qnum<=maxidx){
+		vsetQA(client.prog.qnum);			
+		//vsetAnswerButtonsActive(true, "ib");
+		if(client.prog.qnum==maxidx){
+			setState("finish");
+			//vsetBlockDisplay("infotext", true);
 		}
 	}
 }
@@ -237,12 +260,12 @@ function multiplayInit(n) {
 	vsetOpponentCards(true, true);
 
 	client.multiplayCb = function(dt) {
-		var arr = [ { p:client.p1, id:"qnum1"}, { p:client.p2, id:"qnum2"}, { p:client.p3, id:"qnum3"}, ];
+		var arr = [ { p:client.p1, id:"qnum1", idp:"prog1"}, { p:client.p2, id:"qnum2", idp:"prog2"}, { p:client.p3, id:"qnum3", idp:"prog3"}, ];
 		var n;
 		var j;
 		for(j=0; j<3; ++j) {
 			n = arr[j].p.update(dt);
-			if(multiplayProgUpdate(arr[j].p, n)) {
+			if(multiplayProgUpdate(arr[j].p, n, arr[j].idp)) {
 				vsetCard(arr[j].id, arr[j].p);
 			}
 		}
@@ -275,23 +298,36 @@ function multiplayInit(n) {
 		return arr;
 	};
 
-	function multiplayProgUpdate(player, n) {
+	function multiplayProgUpdate(player, n, idprog) {
 		if(n==-1) return false;
 		if(player.prog.state == "finish") return false;
 		
 		console.log("multiplayProgUpdate: ", player.prog.qnum, client.maxstrike);
 		if(n==-2) {
-			player.prog.qnum++; player.prog.strike=0;
+			player.prog.strike=0;
+			player.prog.feedback=0;
+			vsetProgbar(idprog, player);
+			player.prog.qnum++; 
 		} else {
 			var q = client.quiz.arr[player.prog.qnum];
 			if(q.a==n) {
+				player.prog.strike=0;
+				player.prog.feedback=0;
+				vsetProgbar(idprog, player);
 				player.prog.qnum++;
 			} else {
 				player.prog.strike++;
+
 				if(player.prog.strike==client.maxstrike){
-					player.prog.qnum++;
 					player.prog.penalty++;
 					player.prog.strike=0;
+					player.prog.feedback=2;
+					vsetProgbar(idprog, player);
+					player.prog.qnum++;
+				}
+				else {
+					player.prog.feedback=1;
+					vsetProgbar(idprog, player);
 				}
 			}
 		}
@@ -334,6 +370,9 @@ function vsetOpponentCards(enable, update) {
 		vsetCard("qnum1", client.p1);
 		vsetCard("qnum2", client.p2);
 		vsetCard("qnum3", client.p3);
+		vsetProgbar("prog1", client.p1, true);
+		vsetProgbar("prog2", client.p2, true);
+		vsetProgbar("prog3", client.p3, true);
 	}
 }
 
@@ -343,11 +382,63 @@ function vsetCard(id, player) {
 	e.innerText = txt;
 }
 
+function vsetProgbar(id, player, reset) {
+	var prog = document.getElementById(id); 
+	var c = prog.childNodes; 
+	var marker;
+	var i;
+
+	if(reset) {
+		for(i=0; i<c.length; ++i) {
+			if (c[i].className=="smallmarker") {
+				marker = prog.removeChild(c[i]);
+				break;
+			}
+		}
+		while (prog.hasChildNodes()) {  
+			prog.removeChild(prog.firstChild);
+		} 
+
+		var maxq = player.prog.qsteps;
+		var d = document.createElement("div");
+		d.className = "smallstep";
+		for(i=0; i<maxq; ++i) {
+			prog.appendChild(d.cloneNode());
+		}
+		prog.appendChild(marker);
+	} 
+	else {
+		i = player.prog.qsteps-player.prog.qnum;
+		if(player.prog.feedback==1) {
+			// can try again so color node, but don't move marker
+			c[i].style.backgroundColor = client.feedbackColor[player.prog.feedback];
+		} else {
+			// put new color node in between the marker and the next element
+			marker = c[i+1];
+			var node = prog.removeChild(c[i]);
+			node.style.backgroundColor = client.feedbackColor[player.prog.feedback];
+			prog.insertBefore(node, marker.nextElementSibling);	
+		}
+	}
+}
+
+// Source: https://github.com/Alhadis/Snippets/blob/master/js/polyfills/IE8-child-elements.js
+if(!("nextElementSibling" in document.documentElement)){
+    Object.defineProperty(Element.prototype, "nextElementSibling", {
+        get: function(){
+            var e = this.nextSibling;
+            while(e && 1 !== e.nodeType)
+                e = e.nextSibling;
+            return e;
+        }
+    });
+}
 
 function feedbackAnim(res, num) {
 	var waitms = 1000;
 	vsetAnswerButtonsActive(false);
-	var msg = "feedback";
+	vsetProgbar("prog0", client, false);
+	var msg;
 	
 	switch(res) {
 		case "correct":
