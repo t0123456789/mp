@@ -26,14 +26,17 @@ mpclient = (function () {
 		pet: 0,
 		prog: { score:0, qnum:0, qsteps:0, feedback:0, level:0, strike:0, acc:0, star:0, state:"none", startms:0 },
 		multiplayCb: null,
+		sceneAnimCb: null,
 	}
 
 
 	function menuInit(n){
 		var menu = window.mpdata.init.menu(n);
 		client.prog.qnum = 0;
+		if(menu.steps>0) {
 		client.prog.qsteps = menu.steps;
 		vsetProgbar("prog0", client, true);
+		}
 		return menu;
 	}
 
@@ -53,6 +56,10 @@ function startTimer() {
 
 	if(client.multiplayCb) {
 		client.multiplayCb(client.dt);
+	}
+
+	if(client.sceneAnimCb) {
+		client.sceneAnimCb(client.dt);
 	}
 
 	
@@ -98,9 +105,7 @@ function menuUpdate(n){
 				client.quiz = menuInit(0);
 				vsetBlockDisplay("scoretext", false);
 				vsetBlockDisplay("player", false);
-				vsetBlockDisplay("qdiv", true);
-				vsetSceneBeforeElem("qdiv", false);
-				//client.prog.qnum = 0;
+				sceneFinish();
 				vsetAxStyle("ib");
 				vsetQA(0);
 				setState("start");
@@ -109,8 +114,7 @@ function menuUpdate(n){
 				// single player 
 				client.quiz = menuInit(3);	// get random quiz instead of default
 				client.prog.qnum = 1;
-				vsetBlockDisplay("qdiv", true);
-				vsetSceneBeforeElem("qdiv", false);
+				sceneFinish();
 				vsetAxStyle("coin");
 				vsetQA(1);
 				setState("ready");
@@ -119,18 +123,12 @@ function menuUpdate(n){
 				// show canvas scene
 				setState("pet");
 				client.quiz = menuInit(1);
-				//client.prog.qnum = 0;
-				vsetAxStyle("ib");
-				vsetQA(0);
-				vsetBlockDisplay("qdiv", false);
-				vsetSceneBeforeElem("qdiv", true);
+				sceneInit();
 				break;
 			case 3:
 				// multi player
 				client.quiz = menuInit(2);
-				//client.prog.qnum = 0;
-				vsetBlockDisplay("qdiv", true);
-				vsetSceneBeforeElem("qdiv", false);
+				sceneFinish();
 				vsetAxStyle("ib");
 				vsetQA(0);
 				setState("startmp");
@@ -182,6 +180,7 @@ function menuUpdate(n){
 
 function nextAction(n){	
 	var q = client.quiz.arr[client.prog.qnum];
+	updateSceneGraph(client.prog.qnum,n);
 	var next = q.to[n];
 	client.prog.qnum=next;
 	var maxidx = client.quiz.arr.length-1;
@@ -193,6 +192,22 @@ function nextAction(n){
 			setState("finish");
 			//vsetBlockDisplay("infotext", true);
 		}
+	}
+}
+
+function updateSceneGraph(q,n){
+	if(q===0) {
+		var graph = {cam:1, animtype:"follow"};
+		vsetSceneDraw(graph);
+	}
+
+	if(q===1) {
+		var graph = {cam:1, animtype:"click"};
+		vsetSceneDraw(graph);
+	}
+	if(q===2) {
+		var graph = {cam:1, animtype:"blit"};
+		vsetSceneDraw(graph);
 	}
 }
 
@@ -221,6 +236,22 @@ function setState(s){
 }
 function getState(){
 	return client.prog.state;
+}
+
+function sceneInit() {
+
+	vsetAxStyle("ib");
+	vsetQA(0);
+	vsetBlockDisplay("qdiv", false);
+	vsetSceneBeforeElem("qdiv", true);
+
+	client.sceneAnimCb = mpscene.anim;
+}
+
+function sceneFinish() {
+	client.sceneAnimCb = null;
+	vsetBlockDisplay("qdiv", true);
+	vsetSceneBeforeElem("qdiv", false);
 }
 
 function multiplayInit(n) {
@@ -269,12 +300,6 @@ function multiplayInit(n) {
 				vsetCard(arr[j].id, arr[j].p);
 			}
 		}
-	
-		// n = client.p1.update(dt);
-		// console.log("multiplayCb", n);
-		// if(multiplayProgUpdate(client.p1, n)) {
-		// 	vsetCard("qnum1", client.p1);
-		// }
 	}
 
 	function shuffle(array){
@@ -507,12 +532,12 @@ function vsetSceneBeforeElem(elemId, enable) {
 	vsetElemBlockDisplay(x1, enable);
 }
 
-function vsetSceneDraw() {
+	function vsetSceneDraw(graph) {
 	var c = document.getElementById("canvas");
 	if(!c) return;
 	var ctx = c.getContext("2d", { alpha: false });
 	if(ctx){
-		mpscene.draw(c, ctx);
+			mpscene.draw(c, ctx, graph);
 	} else {
 		console.log("Error: CanvasRenderingContext2D not valid.");
 	}  	  	
@@ -578,7 +603,7 @@ function vsetAxStyle(skin){
 }
 
 function vsetIS(info) {		
-	var str = "Coins:"+client.prog.score+"&nbsp Level:"+client.prog.level+"&nbsp Strike:"+client.prog.strike;	
+		var str = "Coins:"+client.prog.score+"&nbsp Level:"+client.prog.level+"&nbsp Stars:"+client.prog.star;	
 	document.getElementById("scoretext").innerHTML = str;
 	
 	if(client.prog.qnum>0 && client.prog.qnum<=client.quiz.steps) {

@@ -25,11 +25,31 @@ mpscene = (function () {
 		ctx: null,
 	}
 
+	var graph = {
+		cam: 0,
+		fgrid: [],
+		wgrid: [],
+
+		prect: [150,100,50,60],
+		pvec: [0,0,0],
+		panim: { type:"none", speed:8, idle:[0,0,0], pos:[0,0,0], target:[0,0,0], frame:[0,1,2,3,4] },
+
+
+		sprites: [] 
+	}
+
+	var img = {
+		pet: null,
+	}
+
 	function checkParams(canvas, ctx) {
 		if(!canvas || !ctx) {
 			printError("bad canvas params");
 			return false;
 		}
+
+		if(initParams.cvs===canvas) return true;
+
 		if(!initParams.cvs) {
 			printDebug("set first canvas");
 		} else if(initParams.cvs!==canvas){
@@ -39,6 +59,12 @@ mpscene = (function () {
 		initParams.w = canvas.width;
 		initParams.h = canvas.height;
 
+		initParams.perspectiveW = canvas.width;
+		initParams.centreX = canvas.width/2;
+		initParams.centreY = canvas.height/2;
+
+		addClickInput(canvas);			
+
 		if(!initParams.ctx) {
 			initParams.ctx = ctx;
 			printDebug("set first context");
@@ -47,17 +73,83 @@ mpscene = (function () {
 		}
 		initParams.ctx = ctx;
 
+		// fix up pre loaded assets
+		img.pet = document.getElementById("imgp0b");
+
+
 		return true;
 	}
 
 		
-	var drawScene =	function(canvas, ctx){
+	var drawScene =	function(canvas, ctx, sg) {
 			var ok = checkParams(canvas, ctx);
 			if(!ok) return;
 		
+		if(!sg) {
 			drawTestScene(ctx);
+			return;
+		}
 
-			addClickInput(canvas);			
+		if(sg.animtype) {
+			console.log("animUpdate: ", sg.animtype);
+			graph.panim.type = sg.animtype; //"click";
+		}
+
+		if(sg.cam)	{
+			graph.cam=sg.cam;
+			if(graph.cam==1) {
+				drawNormalBackground(ctx);
+				drawPet(ctx);
+			}
+		} 
+	}
+
+	var animUpdate = function(dt) {
+		if(!initParams.ctx) { 
+			return;
+		}
+		var ctx = initParams.ctx;
+
+		if(graph.panim.type==="none") return;
+
+		if(graph.panim.type==="click") {
+			var x = input.cx-160;
+			var y = 20;
+			var z = -60;
+			graph.pvec = [x,y,z];
+			clearSpriteList();
+			drawNormalBackground(ctx);
+			drawPet(ctx, true);
+			drawSpriteList(ctx);
+			return;
+		}
+
+		if(graph.panim.type==="blit") {
+			graph.prect[0] = input.cx;
+			graph.prect[1] = input.cy;			
+			drawNormalBackground(ctx);
+			var s = { img:img.pet, rect:graph.prect };
+			blitSprite(ctx, s);
+			return;
+		}
+
+		if(graph.panim.type==="follow") {
+			if(input.cx!==graph.panim.target[0]) {
+				// map screen space picking coord to 3d floor position
+				var z = -input.cy;
+				var scale = (initParams.perspectiveW + z) / initParams.perspectiveW;
+				var x = (input.cx-160) * scale;
+				var y = 20;	// floor pos - half sprite height
+				graph.pvec = [x,y,z];
+				graph.panim.target = [x,y,z];
+			}
+			clearSpriteList();
+			drawNormalBackground(ctx);
+			drawPet(ctx, true);
+			drawSpriteList(ctx);
+			return;
+		}
+
 		}
 
 	function saveToFile(canvas) {
@@ -71,14 +163,14 @@ mpscene = (function () {
 	function drawTestScene(ctx) {
 			// filled, erased then outlined
 			ctx.fillStyle = 'rgb(0, 255, 0)';
-			ctx.fillRect(25, 25, 100, 100);
-			ctx.clearRect(45, 45, 60, 60);
+		ctx.fillRect(25, 25, 70, 70);
+		ctx.clearRect(45, 45, 55, 55);
 			ctx.strokeRect(50, 50, 50, 50);
 			// intersecting rects, opaque red & transparent blue
 		    ctx.fillStyle = 'rgb(200, 0, 0)';
-			ctx.fillRect(10, 210, 50, 50);	// xy origin is left,top corner. rect params are: (posx,posy,w,h)
+		ctx.fillRect(10, 110, 50, 50);	// xy origin is left,top corner. rect params are: (posx,posy,w,h)
 			ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
-			ctx.fillRect(30, 230, 50, 50);
+		ctx.fillRect(30, 130, 50, 50);
 			
 			// Create gradient 
 			var lingrad = ctx.createLinearGradient(0, 0, 0, 200); // gradient between start and end points (startx,starty,endx,endy)
@@ -90,8 +182,74 @@ mpscene = (function () {
 			ctx.fillRect(150, 0, 150, 200);
 		
 			// images
+		var imgPet = document.getElementById("imgp0b");
 		var img = document.getElementById("imgalpha");
-			ctx.drawImage(img, 150, 150);
+		ctx.drawImage(imgPet, 150, 100, 40, 60);
+		var i;
+		for(i=0; i<64; ++i){
+			ctx.drawImage(img, 50+4*i, 50+3*i, 16, 16);
+		}
+	
+	}
+
+	function drawNormalBackground(ctx) {
+		// Create gradient 
+		var lingrad = ctx.createLinearGradient(0, 0, 0, 200); // gradient between start and end points (startx,starty,endx,endy)
+		lingrad.addColorStop(0, '#00ABEB');	// setup interpolate color from start=0 to end=1
+		lingrad.addColorStop(0.75, '#eeeeff');
+		lingrad.addColorStop(0.75, '#aaffaa');
+		lingrad.addColorStop(1, '#26C000');
+		ctx.fillStyle = lingrad;
+		ctx.fillRect(0, 0, 320, 200);
+	}
+
+	function drawGrid(ctx) {
+
+	}
+
+
+
+
+	function drawSpriteList(ctx) {
+		// z sort first
+
+		var i;
+		for(i=0; i<graph.sprites.length; ++i) {
+			var s = graph.sprites[i];
+			ctx.drawImage(s.img, s.rect[0], s.rect[1], s.rect[2], s.rect[3]);
+		}
+	}
+	function clearSpriteList() {
+		// create new empty array, GC the old one when refs are done
+		graph.sprites = [];
+	}
+
+	function drawSprite(ctx, s, addToList) {
+		// project 3d vector position to 2d front facing sprite, update position and size in rect
+		var scale = initParams.perspectiveW / (initParams.perspectiveW + s.vec[2]);
+		s.rect[0] = (s.vec[0]-s.sizehalf[0])*scale + initParams.centreX ;
+		s.rect[1] = (s.vec[1]-s.sizehalf[1])*scale + initParams.centreY ;
+		s.rect[2] = s.sizehalf[0]*2*scale;
+		s.rect[3] = s.sizehalf[1]*2*scale;
+
+		if(addToList) {
+			graph.sprites.push(s);
+		} else {
+			ctx.drawImage(s.img, s.rect[0], s.rect[1], s.rect[2], s.rect[3]);
+		}
+	}
+
+	function blitSprite(ctx, s) {
+		// do not project from 3d, draw immediately using the preset rect param
+		ctx.drawImage(s.img, s.rect[0], s.rect[1], s.rect[2], s.rect[3]);
+	}
+
+	function drawPet(ctx, addToList) {
+		//var s = {img:img.pet, rect:[], vec:[0,20,-180], sizehalf:[25,30]};
+		var s = {img:img.pet, rect:[], vec:graph.pvec, sizehalf:[25,30]};
+		drawSprite(ctx, s, addToList);
+		
+		//ctx.drawImage(img.pet, 150, 100, 50, 60);
 	}
 			
 	function addClickInput(canvas) {
@@ -119,8 +277,30 @@ mpscene = (function () {
 				}	
 				input.cx = e.clientX - input.rx;
 				input.cy = e.clientY - input.ry;
+
+			if(graph.panim.type!=="none") {
+				//console.log("icon pos:",e);
+				iconPos("absanim heart", e);
+				setTimeout(iconHide, 2000);
+			}
+		}
+		
 			}
 		
+	function iconPos(iconSkin, e) {
+		var i = document.getElementById("iconanim");
+		i.style.display = "block";
+		i.style.top = e.clientY+'px';
+		i.style.left = e.clientX+'px';
+		i.className = iconSkin;
+
+		var x = document.getElementById("gamebody");
+		x.appendChild(i);
+	} 
+	function iconHide() {
+		var i = document.getElementById("iconanim");
+		var x = document.getElementById("iconhide");
+		if(x) x.appendChild(i);
 	}		
 		
 	function printDebug(src) {
@@ -145,7 +325,8 @@ mpscene = (function () {
 
 
 return {
-        draw: drawScene
+		draw: drawScene,
+		anim: animUpdate
     }
 	
 })();

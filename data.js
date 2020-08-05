@@ -20,6 +20,7 @@
             if(n==1) { return this.scenemenu; }		
             if(n==2) { return this.comp2; }		
             if(n==3) { return this.quiz3; }		
+            if(n==4) { return this.quiz4; }		
             return this.defaultdata;
         },
 
@@ -42,11 +43,11 @@
 		]},
 		
         scenemenu: { name:"pets", steps:0, level:0, 
-        help:"This is the place to interact with your pet. (button links are not finished yet)",
+        help:"This is the place to interact with your pet. (There is no way to save your progress atm.)",
 		arr:[
 			{ q: "Pets love to relax after training! Something to do?", opt:[ "back", "shop", "decor", "items" ], 
 																		to:[ 5, 3, 1, 2 ], a:0, val:0 },
-			{ q: "Change the view to floor or wall to arrange items", opt:[ "done", "floor", "wall", "normal" ], 
+			{ q: "Change the view to floor or wall to arrange items", opt:[ "done", "normal", "floor", "wall" ], 
 																		to:[ 0, 1, 1, 1 ], a:0, val:0 },
 			{ q: "Click on an item to see more actions", opt:[ "done", "feed", "clean", "brush" ], 
 																		to:[ 0, 2, 2, 2 ], a:0, val:0 },
@@ -97,6 +98,13 @@
 			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
         ]},
         
+        quiz4: { name:"default", steps:0, level:0, 
+        help:"This is a practice level for brain training + pet game. After completing this you will have earned some coins and see various options to relax with your pet or train some more!",
+		arr:[
+			{ q: "Hello! Which player?", opt:[ "( \\__/ )<br>( ᵔ ᴥ ᵔ )", "/\\.../\\<br>(o . o)", "&nbsp;<br>~{'v'}~", "( )__( )<br>( ᵔ ᴥ ᵔ )" ], a:0, val:0 },
+			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
+		]},
+    	
     };
 
     window.mpdata = mpdata;

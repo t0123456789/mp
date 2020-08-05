@@ -93,12 +93,43 @@ div.abs {
 	background-size: contain;
 }
 
+div.absanim {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	background-size: contain;
+	/*transition: width 1s height 1s linear;*/
+	animation: scale 0.7s infinite linear;
+}
+
+@keyframes scale {
+	from {
+		transform: scale(0.5,0.5);
+	}
+	to {
+		transform: scale(1,1);
+	}
+}
+
+@keyframes rotation {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(359deg);
+	}
+}
+
 div.tick {
 	background-image: url('tick.png');	
 }
 
 div.cross {
 	background-image: url('cross.png');	
+}
+
+div.heart {
+	background-image: url('heart.png');	
 }
 
 img.hiddeninit {
