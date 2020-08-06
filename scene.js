@@ -32,14 +32,16 @@ mpscene = (function () {
 
 		prect: [150,100,50,60],
 		pvec: [0,0,0],
-		panim: { type:"none", speed:8, idle:[0,0,0], pos:[0,0,0], target:[0,0,0], frame:[0,1,2,3,4] },
+		panim: { type:"none", speed:32, click:[0,0], target:[0,0,0] },
 
+		background: null,
 
 		sprites: [] 
 	}
 
 	var img = {
 		pet: null,
+		shop: null,
 	}
 
 	function checkParams(canvas, ctx) {
@@ -75,6 +77,7 @@ mpscene = (function () {
 
 		// fix up pre loaded assets
 		img.pet = document.getElementById("imgp0b");
+		img.shop = document.getElementById("imgshop");
 
 
 		return true;
@@ -98,9 +101,16 @@ mpscene = (function () {
 		if(sg.cam)	{
 			graph.cam=sg.cam;
 			if(graph.cam==1) {
-				drawNormalBackground(ctx);
-				drawPet(ctx);
+				graph.background = drawNormalBackground;
+				//drawNormalBackground(ctx);
 			}
+			if(graph.cam==2) {
+				graph.background = drawShop;
+				//drawShop(ctx);
+				//drawPet(ctx);
+			}
+			graph.background(ctx);
+			//drawPet(ctx);
 		} 
 	}
 
@@ -112,13 +122,26 @@ mpscene = (function () {
 
 		if(graph.panim.type==="none") return;
 
-		if(graph.panim.type==="click") {
+		if(graph.panim.type==="clickX") {
 			var x = input.cx-160;
 			var y = 20;
 			var z = -60;
 			graph.pvec = [x,y,z];
 			clearSpriteList();
-			drawNormalBackground(ctx);
+			graph.background(ctx);
+			drawPet(ctx, true);
+			drawSpriteList(ctx);
+			return;
+		}
+
+		if(graph.panim.type==="clickXZ") {
+			var z = -input.cy;
+			var scale = (initParams.perspectiveW + z) / initParams.perspectiveW;
+			var x = (input.cx-160) * scale;
+			var y = 20;	// floor pos - half sprite height	
+			graph.pvec = [x,y,z];
+			clearSpriteList();
+			graph.background(ctx);
 			drawPet(ctx, true);
 			drawSpriteList(ctx);
 			return;
@@ -127,30 +150,59 @@ mpscene = (function () {
 		if(graph.panim.type==="blit") {
 			graph.prect[0] = input.cx;
 			graph.prect[1] = input.cy;			
-			drawNormalBackground(ctx);
+			graph.background(ctx);
 			var s = { img:img.pet, rect:graph.prect };
 			blitSprite(ctx, s);
 			return;
 		}
 
 		if(graph.panim.type==="follow") {
-			if(input.cx!==graph.panim.target[0]) {
-				// map screen space picking coord to 3d floor position
+
+			if(input.cx!==graph.panim.click[0]) {	
+				graph.panim.click[input.cx,input.cy];
+				// reset target, map screen space picking coord to 3d floor position
 				var z = -input.cy;
 				var scale = (initParams.perspectiveW + z) / initParams.perspectiveW;
 				var x = (input.cx-160) * scale;
 				var y = 20;	// floor pos - half sprite height
-				graph.pvec = [x,y,z];
 				graph.panim.target = [x,y,z];
 			}
+
+			if( equivalentVectorsXZ(graph.pvec, graph.panim.target) ) return;
+
+			// move towards target
+			stepPosXZ(dt, graph.pvec, graph.panim);
+
 			clearSpriteList();
-			drawNormalBackground(ctx);
+			graph.background(ctx);
 			drawPet(ctx, true);
 			drawSpriteList(ctx);
 			return;
 		}
 
 		}
+
+	function equivalentVectorsXZ(v1,v2) {
+		// check position is close enough to be considered the same
+		var maxdist = 5;
+		if ( Math.abs(v1[0]-v2[0]) > maxdist ) return false;
+		if ( Math.abs(v1[2]-v2[2]) > maxdist ) return false;
+		return true;
+	}
+
+	function stepPosXZ(dt,vec3,anim) {
+		// update the 3d vector position in place, leave y coordinate as it is, so we move along horizontal to floor
+		var tx,tz,len,dx,dz,dsize;
+		tx = anim.target[0] - vec3[0];
+		tz = anim.target[2] - vec3[2];
+		len = Math.sqrt(tx*tx+tz*tz);
+		// step in the direction towards target, moving at speed in pixel units per second (dt is in ms)
+		dsize = (dt / 1000) * (anim.speed / len);
+		dx = tx * dsize;
+		dz = tz * dsize;
+		vec3[0] += dx;
+		vec3[2] += dz;	
+	}
 
 	function saveToFile(canvas) {
 		var dataURL = canvas.toDataURL();
@@ -203,8 +255,15 @@ mpscene = (function () {
 		ctx.fillRect(0, 0, 320, 200);
 	}
 
-	function drawGrid(ctx) {
-
+	function drawShop(ctx) {
+		var lingrad = ctx.createLinearGradient(0, 0, 0, 200); // gradient between start and end points (startx,starty,endx,endy)
+		lingrad.addColorStop(0, '#0080AB');	// setup interpolate color from start=0 to end=1
+		lingrad.addColorStop(0.75, '#ccccaa');
+		lingrad.addColorStop(0.75, '#80cc80');
+		lingrad.addColorStop(1, '#26C000');
+		ctx.fillStyle = lingrad;
+		ctx.fillRect(0, 0, 320, 200);
+		ctx.drawImage(img.shop, 0, 0, 157, 200);
 	}
 
 
