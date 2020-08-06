@@ -20,8 +20,8 @@ mpclient = (function () {
 	var client = {
 		t : 0,
 		dt : 0,
-		interdt : 500,
-		feedbackColor: ["rgb(0,150,0)","rgb(200,130,70)","rgb(200,0,0)"],
+		interdt: 150, //500,
+		feedbackColor: ["rgb(0,150,0)","rgb(200,145,8)","rgb(200,0,0)"],
 		maxstrike : 3,
 		pet: 0,
 		prog: { score:0, qnum:0, qsteps:0, feedback:0, level:0, strike:0, acc:0, star:0, state:"none", startms:0 },
@@ -180,8 +180,8 @@ function menuUpdate(n){
 
 function nextAction(n){	
 	var q = client.quiz.arr[client.prog.qnum];
-	updateSceneGraph(client.prog.qnum,n);
 	var next = q.to[n];
+	updateSceneGraph(client.prog.qnum, n, next);
 	client.prog.qnum=next;
 	var maxidx = client.quiz.arr.length-1;
 	vsetIconHide();
@@ -195,18 +195,22 @@ function nextAction(n){
 	}
 }
 
-function updateSceneGraph(q,n){
+function updateSceneGraph(q,n,next){
 	if(q===0) {
 		var graph = {cam:1, animtype:"follow"};
 		vsetSceneDraw(graph);
 	}
 
-	if(q===1) {
-		var graph = {cam:1, animtype:"click"};
+	if(next===1) {
+		var graph = {cam:1, animtype:"clickXZ"};
 		vsetSceneDraw(graph);
 	}
-	if(q===2) {
-		var graph = {cam:1, animtype:"blit"};
+	if(next===2) {
+		var graph = {cam:1, animtype:"follow"};
+		vsetSceneDraw(graph);
+	}
+	if(next===3) {
+		var graph = {cam:2, animtype:"blit"};
 		vsetSceneDraw(graph);
 	}
 }
