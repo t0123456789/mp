@@ -365,7 +365,7 @@ mpscene = (function () {
 				} 
 			}
 		}
-		return {hit,aabb};
+		return { hit:hit, aabb:aabb };
 	}
 
 	function checkParams(canvas, ctx) {
