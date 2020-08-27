@@ -659,7 +659,6 @@ function multiplayInit(n) {
 		if(n==-1) return false;
 		if(player.prog.state == "finish") return false;
 		
-		console.log("multiplayProgUpdate: ", player.prog.qnum, client.maxstrike);
 		if(n==-2) {
 			player.prog.strike=0;
 			player.prog.feedback=0;

@@ -428,12 +428,10 @@ mpscene = (function () {
 		}
 
 		if(sg.animtype) {
-			console.log("animtype set: ", sg.animtype);
 			graph.panim.type = sg.animtype; //"click";
 		}
 
 		if(sg.action) {
-			console.log("action set: ", sg.action);
 			graph.paction.type = sg.action;
 
 			if(sg.action==="none") {
