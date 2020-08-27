@@ -25,9 +25,25 @@ span.imgb {
 			padding: 0px;
 			vertical-align: middle;
 			line-height: 50px;
-		}
+}
+
+span.buff {
+	display: inline-block;
+	/*width:36px;*/
+	height:14px;
+	margin-left:auto;
+	margin-right:auto;
+	padding: 0px;
+	padding-right: 4px;
+	color:rgb(0,150,0);
+	font-size: 14px;
+	line-height: 14px;
+	vertical-align: middle;
+	text-align: center;
+}
 
 span.card {
+	position: relative;
 	display: inline-block;
 	width: 40px;
 	height: 50px;
@@ -35,11 +51,12 @@ span.card {
 	background-color: #ffffda; 
 	vertical-align: middle;
 	line-height: 50px;
+	border: 1px solid blue;
 }
 
 span.prog {
 	display: inline-block;
-	width: 40px;
+	width: 38px;
 	height: 50px;
 	padding: 0px;
 	vertical-align: middle;
@@ -70,7 +87,6 @@ div.smallstep {
 	margin-left:auto;
 	margin-right:auto;
 	border: 1px solid #000 ;
-
 }
 div.smallmarker {
 	width:20px;
@@ -132,13 +148,101 @@ div.heart {
 	background-image: url('heart.png');	
 }
 
+div.spark {
+	background-image: url('spark.png');	
+}
+
+div.sleep {
+	background-image: url('sleep.png');	
+}
+
+span.star {
+	display: inline-block;
+	vertical-align: text-bottom;
+	width: 21px;
+	height: 21px;
+	border:1px solid #000;
+	background-image: url('star.png');
+	background-size: cover;	
+}
+
+span.npc {
+	display: inline-block;
+	vertical-align: text-bottom;
+	width: 60px;
+	height: 70px;
+	position: absolute;
+  	clip: rect(20px,40px,60px,0px);
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+span.shortmsg {
+	display: inline-block;
+	width: 190px;
+	min-height: 80px;
+}
+
 img.hiddeninit {
-	width: 10px;
-	height: 10px;
+	width: 64px;
+	height: 64px;
 }
 
 canvas {
 	display: block;
-	border: 2px solid lime;
+	border: 1px solid rgb(1, 75, 1);
 	background-color: black;
+}
+
+table, td, th {
+	border: 1px solid rgb(1, 75, 1);
+  }
+  
+  table {
+	border-collapse: collapse;
+	width: 100%;
+  }
+  
+  th, caption {
+	text-align: left;
+  }
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 110px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 320px; 
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modalcontent {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 16px;
+    border: 1px solid #888;
+	width: 80%;
+}
+
+
+/* The Close Button */
+.close {
+    color: #888;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }

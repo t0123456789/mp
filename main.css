@@ -4,7 +4,18 @@ body {
     background:#badaff;
 }
 
+div.qbox {
+    height:100px;
+    padding: 0px;
+    text-align:center;
+    vertical-align: middle;
+    line-height: 28px;
+    border:1px solid #000;
+    background-color:#effeee;
+}
+
 span.ib {
+	position: relative;
     display: inline-block;
     width: 73px;
     height: 73px;
@@ -13,52 +24,36 @@ span.ib {
     border: 1px solid blue;    
     background-color: #ffffda; 
 }	
+span.ibgreyout {
+    pointer-events: none;
+    background-color: #7e7e7a;
+}
 
 .helpbutton {
-    float: right;
     border-radius: 35px;
     background-color: blue; 
     border: none; 
     color: white; 
+    float: right;
+    font-size: 20px;
     font-weight: bold;
     text-align: center;
 }
 
-/* The Modal (background) */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  }
-  
-  /* Modal Content */
-  .modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-  }
-  
-  /* The Close Button */
-  .close {
-    color: #aaaaaa;
+.timer {
+  background-color: pink; 
+  border: 1px solid blue;
+  height: 24px;
+  color: black; 
+  margin-right: 3px;
+  padding-right: 3px;
+  padding-left: 3px;
     float: right;
-    font-size: 28px;
+  font-family: monospace, monospace;
+  font-size: 13px;
     font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+	line-height: 24px;
   }
   
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-  }
