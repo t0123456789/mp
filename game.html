@@ -1,0 +1,127 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <title>M P Game</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" type="text/css" href="main.css">
+	<link rel="stylesheet" type="text/css" href="img/img.css">
+
+	<script src="data.js"></script>
+	<script src="scene.js"></script>
+	<script src="client.js"></script>
+	<script src="modal.js"></script>
+	<script src="ai.js"></script>
+	<script src="patch.js"></script>
+</head>
+
+<body>
+	<div id="header" style="height:15px"></div>
+
+	<div id="gamebody" style="font-size:21px;max-width:320px;margin-left:auto;margin-right:auto;">		
+		
+		<div id="topright">	
+			<input id="help" type="button" value="i" class="helpbutton">
+			<!--<p style="font-size:11px;" id="helptutorial">Click on the [i] button for more information > </p>-->
+			<span id="timer" class="timer hiddeninit">00:00</span>
+		</div>	
+		<div>	
+			<p id="scoretext" style="margin-top:0px;margin-bottom:0px;padding:0px;"></p>
+		</div>	
+		<div style="height:21px;" id="p0buffs"></div>
+		<div style="height:55px;">
+			<div id="player"><!--		
+			--><span id="p0" class="card">
+				<div id="pet0" class="smallface"></div>
+				<div id="qnum0" class="smallqnum">6/10</div>
+			</span><span id="prog0" class="prog"><!--		
+			--><div id="marker0" class="smallmarker" style="background-color:#ffffda"></div><!--		
+			--></span><!--
+			--><span id="oppo" class="hiddeninit"><span id="p1" class="card" style="background-color: rgb(243, 109, 248)">
+				<div id="pet1" class="smallface"></div>
+				<div id="qnum1" class="smallqnum">6/10</div>
+			</span><span id="prog1" class="prog">
+				<div id="marker1" class="smallmarker" style="background-color: rgb(243, 109, 248)"></div>
+			</span><!--
+			--><span id="p2" class="card" style="background-color: #743afc">
+				<div id="pet2" class="smallface"></div>
+				<div id="qnum2" class="smallqnum">6/10</div>
+			</span><span id="prog2" class="prog">
+				<div id="marker2" class="smallmarker" style="background-color: #743afc"></div>				
+			</span><!--
+			--><span id="p3" class="card" style="background-color: rgb(154, 156, 158)">
+				<div id="pet3" class="smallface"></div>
+				<div id="qnum3" class="smallqnum">6/10</div>
+			</span><span id="prog3" class="prog">
+				<div id="marker3" class="smallmarker" style="background-color: rgb(154, 156, 158)"></div>
+			</span></span><!--
+			--></div>
+		</div>	
+		
+		<div id="qdiv" class="qbox">
+			<p id="questiontext" style="margin-top:11px;">Question 1: ...</p>
+		</div>
+		<p id="infotext">Click the answer:</p>
+		<div> 
+			<span id="a0" class="ib" tabindex="1" onkeyup="mpclient.keyPress(event, 0)" onclick="mpclient.checkAnswer(0)">&nbsp;<br />word</span> 
+			<span id="a1" class="ib" tabindex="2" onkeyup="mpclient.keyPress(event, 1)" onclick="mpclient.checkAnswer(1)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
+			<span id="a2" class="ib" tabindex="3" onkeyup="mpclient.keyPress(event, 2)" onclick="mpclient.checkAnswer(2)">&nbsp;<br />000</span>	
+			<span id="a3" class="ib" tabindex="4" onkeyup="mpclient.keyPress(event, 3)" onclick="mpclient.checkAnswer(3)">( \__/ )<br />( ᵔ ᴥ ᵔ )</span> 
+		</div>
+	</div>
+	
+	<div id="footer" style="height:15px"></div>
+
+	<!-- The Modal -->
+	<div id="myModal" class="modal">
+
+	<!-- Modal content -->
+	<div class="modalcontent">
+		<span class="close">&times;</span>
+		<div><span id="modalshort" class="shortmsg">Title or summary...</span><span id="modalspr" class="npc"></span></div>
+		<div id="modaltext">...</div>
+	</div>
+
+  	</div>
+	
+	<script>
+		window.onload = function() {	  		
+		  mpclient.gameStart();
+		}
+	</script>
+	
+	<div id="statustext">
+		<div style="width:500px;height:30px"></div>
+
+		<img id="imgp0b" class="hiddeninit" src="img/p0body.jpg" alt="player 0">
+		<img id="imgshop" class="hiddeninit" src="img/shopb.png" alt="A shop">
+		<img id="imgsmall" class="hiddeninit" src="img/small.png" alt="sprite sheet">
+		<img id="imganim0" class="hiddeninit" src="img/anim0.png" alt="sprite sheet">
+		<img id="imganim1" class="hiddeninit" src="img/anim1.png" alt="sprite sheet">
+		<img id="imganim2" class="hiddeninit" src="img/anim2.png" alt="sprite sheet">
+		<img id="imganim3" class="hiddeninit" src="img/anim3.png" alt="sprite sheet">
+		<img id="img0" class="hiddeninit" src="img/npchelp.png" alt="test">
+		<img id="img3" class="hiddeninit" src="img/tree.png" alt="test">
+		<img id="img200" class="hiddeninit" src="img/speech.png" alt="test">
+		<img id="img201" class="hiddeninit" src="img/decor.jpg" alt="test">
+
+
+
+		<div id="dbgtimer" style="width:300px;height:30px;border:1px solid #000;">300x30px</div>
+
+		<div style="position: relative;">
+			<p id="error"> Level:99 <span class="star"></span>:99999 <span class="star"></span>:0</p>
+		</div>
+		<div id="iconhide" style="width:100px;height:100px;border:1px solid #000;position: relative">100x100px
+			<div class="abs tick" id="icon"></div>
+		</div>
+		<div style="width:100px;height:100px;border:1px solid #000;position: relative">100x100px
+			<div class="abs heart" id="iconanim"></div>
+		</div>
+	</div>
+
+</body>
+
+</html>
