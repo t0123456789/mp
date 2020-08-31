@@ -5,13 +5,14 @@ permalink: /index.html
 
 
 
-# mp game
+# mp game Demo Version
+
 
 # A mix of brain training and pet sim.
 
 Stay smart and improve your mental math skills,
 practice is even more fun when you earn coins and care for your pet.
-
+Play this demo version online here: https://t0123456789.github.io/mp/
 
 
 # Making a copy of this game on your own machine
