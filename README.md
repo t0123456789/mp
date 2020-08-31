@@ -19,7 +19,7 @@ Play this demo version online here: https://t0123456789.github.io/mp/
 
 After doing this you can play the game without being online.
 You will need access to the your download machine's file system, a way to open zip files and a web browser. 
-You can also edit your copy to create and test your own version of this game.
+You can edit your copy to create and test your own version of this game.
 
 Download the files for this game from github:
 	https://github.com/t0123456789/mp
@@ -35,12 +35,12 @@ Download the files for this game from github:
 # Changing the artwork
 
 All the files are in the 'img' folder.
-You can edit and save the original in any format or size, then export to jpg or png (if alpha channel is needed). Gimp is a good image editing tool for this (install from https://www.gimp.org/downloads/)
+You can edit and save the original in any format or size, then export to jpg, or png if alpha channel is needed. Gimp is a good image editing tool for this (install from https://www.gimp.org/downloads/)
 
 
 # Changing menu, quiz and items data:
 
-The initial questions and answers are in the file called data.js. (Later addition quizzes are generated in code.)
+The initial questions and answers are in the file called data.js. Later addition quizzes are generated in code.
 The items are also listed in this file, search for the object called 'mpdata.items'.
 The pet face images, names and card colours are set in the object called 'mpdata.pet'.
 
@@ -53,16 +53,16 @@ Notepad++ is a good text editor for viewing and editing files which contain code
 This game aims to support many old devices and  browser versions, offline play for unreliable internet connections and simple open source code. Work is in progress, including this readme file... but the idea is to support using some older legacy devices, saving them from the landfill and saving you the money and carbon footprint of upgrading.
 
 It should work on any current web browsers on desktop, laptop, tablet/mobile/other devices, and is being developed to avoid known issues with older draft and legacy standards and unsupported features.
-Many old devices such as PCs are not legacy ones if the web browser software can be updated to a current version. In this case the game should work fine.
+Many old devices such as PCs are not legacy ones if the web browser software can be updated to a current version. In this case the game should work fine. Legacy devices can not be updated, there are no more system updates and may lack it support from the manufacturer, official app stores etc.
 
-It has been checked and works on some legacy mobiles, consoles and tablets including:
-(Legacy devices can not be updated, there are no more system updates and may lack it support from the manufacturer, official app stores etc.)
+It has been checked and works on some legacy or old mobiles, consoles and tablets including:
   
- 1st generation iPad (the one with no camera), iOS 5 + Safari 5.1
- iPhone 4, iOS 9 + Safari 9
- Moto G phone, Android 7 + Chrome 84 or Firefox 11
- WiiU + default web browser
- PSVita + default web browser
+- 1st generation iPad (the one with no camera), iOS 5 + Safari 5.1
+- iPhone 4, iOS 9 + Safari 9
+- Moto G phone, Android 7 + Chrome 84 or Firefox 11
+- WiiU + default web browser
+- PSVita + default web browser
+
 
 
 # Security and privacy
