@@ -35,7 +35,12 @@ Download the files for this game from github:
 # Changing the artwork
 
 All the files are in the 'img' folder.
-You can edit and save the original in any format or size, then export to jpg, or png if alpha channel is needed. Gimp is a good image editing tool for this (install from https://www.gimp.org/downloads/)
+You can edit and save the original in any format or size, then export to jpg, or png if alpha channel is needed. Gimp is a good image editing tool for this (install from https://www.gimp.org/downloads/).
+
+The current artwork contains some edited images from a free artwork pack from:
+https://hasgraphics.com/danc-planet-cute-tileset/
+https://lostgarden.home.blog/2007/05/12/dancs-miraculously-flexible-game-prototyping-tiles/
+
 
 
 # Changing menu, quiz and items data:
@@ -48,9 +53,11 @@ Notepad++ is a good text editor for viewing and editing files which contain code
 
 
 
-# Works on many devices, using existing devices rather than upgrading has much less environmental impact
 
-This game aims to support many old devices and  browser versions, offline play for unreliable internet connections and simple open source code. Work is in progress, including this readme file... but the idea is to support using some older legacy devices, saving them from the landfill and saving you the money and carbon footprint of upgrading.
+
+# Works on many devices, because using existing devices whenever possible is much better for the environment than upgrading
+
+This game aims to support many old devices and  browser versions, offline play for unreliable internet connections and simple open source code. Work is in progress, including this readme file... but the idea is to support using some older legacy devices, saving them from the landfill and saving you the money and carbon footprint of upgrading. 
 
 It should work on any current web browsers on desktop, laptop, tablet/mobile/other devices, and is being developed to avoid known issues with older draft and legacy standards and unsupported features.
 Many old devices such as PCs are not legacy ones if the web browser software can be updated to a current version. In this case the game should work fine. Legacy devices can not be updated, there are no more system updates and may lack it support from the manufacturer, official app stores etc.
@@ -67,7 +74,7 @@ It has been checked and works on some legacy or old mobiles, consoles and tablet
 
 # Security and privacy
 
-If you are playing on a legacy browser, please be aware that security updates are no longer provided for your operating system or software. This means you should not trust it to be secure when you are accessing private information, do not login to your bank account using that device!
+If you are playing or doing anything on a legacy browser, please be aware that security updates are no longer provided for your operating system or software. This means you should not trust it to be secure when you are accessing private information, do not login to your bank account using that device!
 
 
 
