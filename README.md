@@ -10,7 +10,7 @@ permalink: /index.html
 # A mix of brain training and pet sim.
 
 Stay smart and improve your mental math skills,
-practice is even more fun when you earn coins and  buff your pet.
+practice is even more fun when you earn coins and care for your pet.
 
 
 
@@ -34,30 +34,22 @@ Download the files for this game from github:
 # Changing the artwork
 
 All the files are in the 'img' folder.
-You can edit in whatever edit tool and save the original in any format or size, then export to smaller jpg or png (if alpha channel is needed).
-I got test images from Google image search, photos from my mobile and screenshot Snipping Tool in Windows.
-I edited image files using Gimp (can be installed from https://www.gimp.org/downloads/)
-Do a quick test first just incase...
+You can edit and save the original in any format or size, then export to jpg or png (if alpha channel is needed). Gimp is a good image editing tool for this (install from https://www.gimp.org/downloads/)
 
 
-# Changing menu and quiz data:
+# Changing menu, quiz and items data:
 
-The initial questions and answers are in the file called data.js
+The initial questions and answers are in the file called data.js. (Later addition quizzes are generated in code.)
+The items are also listed in this file, search for the object called 'mpdata.items'.
+The pet face images, names and card colours are set in the object called 'mpdata.pet'.
 
-
-
-
-# Works on many devices, Play with less environmental impact
-
-This game aims to support many old devices and  browser versions, offline play for unreliable internet connections and simple open source code. 
-
-Work is in progress, including this readme file... but the idea is to support using some older legacy devices, saving them from the landfill and saving you the money and carbon footprint of upgrading.
+Notepad++ is a good text editor for viewing and editing files which contain code & html tags (install from https://notepad-plus-plus.org)
 
 
-To play your own local version, just download a copy and open the index.html in your browser.
 
-Its also possible to edit your copy to create and share your own modified game version with others,  to make your own quizzes and change the look of pets and items. More details below.
+# Works on many devices, using existing devices rather than upgrading has much less environmental impact
 
+This game aims to support many old devices and  browser versions, offline play for unreliable internet connections and simple open source code. Work is in progress, including this readme file... but the idea is to support using some older legacy devices, saving them from the landfill and saving you the money and carbon footprint of upgrading.
 
 It should work on any current web browsers on desktop, laptop, tablet/mobile/other devices, and is being developed to avoid known issues with older draft and legacy standards and unsupported features.
 Many old devices such as PCs are not legacy ones if the web browser software can be updated to a current version. In this case the game should work fine.
@@ -76,23 +68,8 @@ It has been checked and works on some legacy mobiles, consoles and tablets inclu
 
 If you are playing on a legacy browser, please be aware that security updates are no longer provided for your operating system or software. This means you should not trust it to be secure when you are accessing private information, do not login to your bank account using that device!
 
-This game does not require a login or any personal details or track your data. You can inspect the source code to see exactly what is being accessed on your machine.
-
-
-# Create your own modified game version
-
-Its easiest to do this on desktop or laptop as you may need to edit the text in source code files or use some sort of image or photo editing software to change the art work.
-
-Some tools to help you edit files:
-https://notepad-plus-plus.org
-
-How to check GPG signiture of downloaded executables:
 
 
 
-# Can your choice of games really help the environment?
-
-Obviously you still need to power or charge your device, but most older devices have lower energy consumption than high spec new systems. The cost to the environment from sourcing raw materials to manufacturing and shipping is normally huge compared to the lifetime energy usage of a computer, so it is pretty much always worse overall if replacing an existing device.
-When it comes to games compared to other activities, its much lower impact than going on trips or holidays. But it is also good to get out in the real world and look after it if you can!
 
 
