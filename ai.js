@@ -242,8 +242,8 @@ window.mpgame.aiLevel.prototype.appendSimilarQA = function(sec, n) {
             dst.opt[replace] = oldans;
         }
         
-        // shuffle the answer, using rand idx based on answer
-        var ri = Math.abs(ans.val%4);
+        // shuffle the answer, using rand idx based on question
+        var ri = Math.abs(ops.l2%4);
         dst.a = ri;
         var swap = dst.opt[ri];
         dst.opt[ri] = ''+ans.val;
