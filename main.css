@@ -4,6 +4,29 @@ body {
     background:#badaff;
 }
 
+div.gamebody {
+    font-size:19px;
+    max-width:320px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+@media only screen and (max-width: 319px) {
+    div.gamebody {
+        font-size:16px;
+        width:280px;
+        margin-left:auto;
+        margin-right:auto;
+    }
+}
+
+@media only screen and (min-width: 640px) {
+    div.gamebody {
+        font-size:34px;
+        max-width:640px;
+    }
+}
+
 div.qbox {
     min-height:100px;
     padding: 0px;
@@ -17,13 +40,35 @@ div.qbox {
 span.ib {
 	position: relative;
     display: inline-block;
-    width: 73px;
-    height: 73px;
+    width: 72px;
+    height: 72px;
     padding: 0px;
     text-align: center;
     border: 1px solid blue;    
     background-color: #ffffda; 
 }	
+
+@media only screen and (max-width: 319px) {
+    span.ib {
+        width: 64px;
+        height: 64px;
+    }
+}
+
+@media only screen and (min-width: 640px) {
+    span.ib {
+        width: 140px;
+        height: 140px;
+        margin: 5px;
+    }
+
+    div.qbox {
+        min-height:200px;
+        line-height: 38px;
+        padding: 10px;
+    }
+}
+
 span.ibgreyout {
     pointer-events: none;
     background-color: #7e7e7a;
@@ -32,6 +77,8 @@ span.ibgreyout {
 .helpbutton {
     border-radius: 35px;
     background-color: blue; 
+    padding-right: 5px;
+    padding-left: 5px;
     border: none; 
     color: white; 
     float: right;
@@ -57,6 +104,20 @@ span.ibgreyout {
 	line-height: 24px;
   }
   
+@media only screen and (min-width: 640px) {
+    .helpbutton {
+        padding-right: 15px;
+        padding-left: 15px;
+        font-size: 40px;
+    }
+    .timer {
+        height: 48px;
+        font-size: 26px;
+        line-height: 48px;
+    }
+    
+}
+
 *:focus {
     outline: none;
 }

@@ -31,15 +31,12 @@ mpclient = (function () {
 	}
 
 	var client = {
-		//tinit: 0,
-		tdayms: 1000, //1000*60*60*24,
-		//tpet: 0,
+		tdayms: 1000, //1000*60*60*24, //todo: change to real time, one day=24hours, atm one day=1second
 		t: 0,
 		dt: 0,
 		interdt: 150, //500,
 		feedbackColor: ["rgb(0,150,0)","rgb(200,145,8)","rgb(200,0,0)"],
 		maxstrike: 3,
-		//pet: 0,
 		prog: { coins:0, score:0, qnum:0, qsteps:0, feedback:0, level:0, strike:0, acc:0, star:0, state:"none", startms:0 },
 		multiplayCb: null,
 		sceneAnimCb: null,
@@ -449,7 +446,7 @@ function updatePetButtonFeedbackAnim(q, n, next){
 
 function updateSceneGraph(q, n, next){
 
-	var graph = {cam:1, animtype:"follow", action:"none"};
+	var graph = {cam:1, animtype:"follow", pet:client.pet ,action:"none"};
 	if(next===0) {
 		vsetSceneDraw("canvas", graph);
 		return;
@@ -781,10 +778,6 @@ function setRanking(tpen) {
 	var p0pos = null;
 	// create ranking table
 	rank.txt = mpdata.txt.fini.rank;
-/*    '<tr><th scope="row">1</th><td>Puppy</td><td>12/12</td><td>40000</td><td>40000</td></tr>'+
-    '<tr><th scope="row">2</th><td>Kitty</td><td>12/12</td><td>100000</td><td>180000</td></tr>'+
-    '<tr><th scope="row">3</th><td>Puppy</td><td>12/12</td><td>40000</td><td>40000</td></tr>'+
-    '<tr><th scope="row">4</th><td>Puppy</td><td>12/12</td><td>100000</td><td>180000</td></tr>'+*/
 	
 	for(i=0; i<player.length; ++i) {
 		if(player[i]===client) p0pos=i+1;	// find position of player 0 while iterating
@@ -1053,12 +1046,19 @@ function feedbackShop(res,num) {
 		var x1 = document.getElementById("scene");	
 		if(!x1){
 			var x2 = document.getElementById(elemId);
-			x2.insertAdjacentHTML('beforebegin', '<div id="scene" style="position:relative;"><canvas id="canvas" width="320" height="200">Your browser does not support the HTML5 canvas tag.</canvas></div>');	
+			var divbegin = '<div id="scene" style="position:relative;">';
+			var cvsbegin = '<canvas id="canvas" width="320" height="200">';
+			if(window.matchMedia) {
+				var mql = window.matchMedia('(min-width: 640px)');
+				if(mql.matches) {
+					cvsbegin = '<canvas id="canvas" width="640" height="400">';
+				}
+			}
+			x2.insertAdjacentHTML('beforebegin', divbegin+cvsbegin+'Your browser does not support the HTML5 canvas tag.</canvas></div>');	
 			x1 = document.getElementById("scene");	
-
-			var graph = {cam:1, animtype:"follow", action:null};
-			vsetSceneDraw("canvas", graph);
 		}
+		var graph = {cam:1, animtype:"follow", pet:client.pet, action:null};
+			vsetSceneDraw("canvas", graph);
 		vsetElemBlockDisplay(x1, enable);
 	}
 

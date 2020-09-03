@@ -34,11 +34,18 @@ mpscene = (function () {
 		cwhalf: 160,
 		ch: 200,
 		cfy: 140,
-		vfy: 14,
+		vfy: 50,
 		pw: 50,
 		ph: 50,
 		pwhalf: 25,
 		phhalf: 25,
+		iconsize: 24,
+		iabove: 70,
+		lowrect: [0,140,320,60],
+		siderect: [50,0,270,160],
+		highrect: [0,0,320,60],
+		rectfloor: [0,60,320,140], 
+		rectwall: [0,0,320,140],
 	}
 
 	// these are fixed sizes of assets
@@ -53,9 +60,8 @@ mpscene = (function () {
 		wgrid: [],
 
 		prect: [260,170,50,60],
-		pvec: [0,20,-5],
-		psprite: { img:null, sheet:{grp:0, frame:2, size:pxsize.petanim}, rect:[], sizehalf:[25,25] }, // {img:img.pet, rect:[], vec:graph.pvec, sizehalf:[25,30]};
-		//psprite: { img:null, sheet:{grp:0, frame:2, size:40}, rect:[], sizehalf:[25,30] }, // {img:img.pet, rect:[], vec:graph.pvec, sizehalf:[25,30]};
+		pvec: [0,relcoord.phhalf,-5],
+		psprite: { img:null, sheet:{grp:0, frame:2, size:pxsize.petanim}, rect:[], sizehalf:[25,25] },
 		panim: { type:"none", speed:32, click:[0,0], target:[0,0,0], key:null },
 		paction: { type:"none", },
 		pstate: { fed:0, yestfed:1, spark:0, sleep:false, buff:[], },
@@ -113,7 +119,7 @@ mpscene = (function () {
 		found:[],
 		iconsize: 24,
 		lowrect: [0,140,320,60],
-		siderect: [80,0,240,160],
+		siderect: [50,0,270,160],
 		highrect: [0,0,320,60],
 		rectfloor: [0,60,320,140], //[0, highrect[4], 320, (200-highrect[4])],
 		rectwall: [0,0,320,140], //[0, 0, 320, lowrect[1]],
@@ -209,7 +215,7 @@ mpscene = (function () {
 
 	function dispItemFind(flag, notdec) {
 		// find all owned items that are usable with that action
-		// optional & not already used in decor
+		// notdec: optional, only finds items not already used in decor
 		itemdisp.found = [];
 		var i;
 		for(i=0; i<itemdisp.slot.length; ++i) {
@@ -308,7 +314,7 @@ mpscene = (function () {
 					dispItemClearSelection(true);
 				}
 			}
-			else { //if(itemdisp.select.aabb.dec===1) {
+			else { 
 				// a wall/floor item was selected, check container first
 				if(ret.hit) {
 					if(ret.aabb.dec===0) {
@@ -419,7 +425,14 @@ mpscene = (function () {
 		// calculate scale factor for relative screen coordinates
 		// assume aspect ratio is same...
 		if(initParams.w !== 320) {
-			relcoord.scale = initParams.w / 320;
+			var s = relcoord.scale = initParams.w / 320;
+			graph.pvec[1] = relcoord.phhalf*s;
+			scaleArrayAssign(itemdisp.iconsize, relcoord.iconsize, s);
+			scaleArrayAssign(itemdisp.lowrect, relcoord.lowrect, s);
+			scaleArrayAssign(itemdisp.siderect, relcoord.siderect, s);
+			scaleArrayAssign(itemdisp.highrect, relcoord.highrect, s);
+			scaleArrayAssign(itemdisp.rectfloor, relcoord.rectfloor, s);
+			scaleArrayAssign(itemdisp.rectwall, relcoord.rectwall, s);
 		}
 
 		// fix up pre loaded assets
@@ -427,12 +440,11 @@ mpscene = (function () {
 		img.shop = document.getElementById("imgshop");
 		img.speech = document.getElementById("img200");
 		img.think = document.getElementById("img201");
-		img.anim0 = document.getElementById("imganim0");
-		img.anim1 = document.getElementById("imganim1");
-		img.anim2 = document.getElementById("imganim2");
-		img.anim3 = document.getElementById("imganim3");
-
-		graph.psprite.img = img.anim0; 
+		img.anim = [];
+		var i;
+		for(i=0; i<4; ++i) {
+			img.anim.push(document.getElementById("imganim"+i.toString()))
+		}
 
 		// fix up item display
 		dispItemUpdateDecor();
@@ -440,6 +452,12 @@ mpscene = (function () {
 		return true;
 	}
 
+	function scaleArrayAssign(dst, src, scale) {
+		var i;
+		for(i=0; i<dst.length; ++i) {
+			dst[i] = src[i]*scale;
+		}
+	}
 		
 	var drawScene =	function(canvas, ctx, sg) {
 		var ok = checkParams(canvas, ctx);
@@ -452,6 +470,7 @@ mpscene = (function () {
 
 		if(sg.animtype) {
 			graph.panim.type = sg.animtype; //"click";
+			graph.psprite.img = img.anim[sg.pet];
 		}
 
 		if(sg.action) {
@@ -516,17 +535,17 @@ mpscene = (function () {
 
 		if(graph.panim.type==="none") return;
 
-		if(graph.panim.type==="clickX") {
-			var x = input.cx-160;
-			var y = 20;
-			var z = -60;
-			graph.pvec = [x,y,z];
-			clearSpriteList();
-			graph.background(ctx);
-			drawPet(ctx);
-			drawSpriteList(ctx);
-			return;
-		}
+		// if(graph.panim.type==="clickX") {
+		// 	var x = input.cx-160;
+		// 	var y = 20;
+		// 	var z = -60;
+		// 	graph.pvec = [x,y,z];
+		// 	clearSpriteList();
+		// 	graph.background(ctx);
+		// 	drawPet(ctx);
+		// 	drawSpriteList(ctx);
+		// 	return;
+		// }
 
 		if(graph.panim.type==="clickXZ") {
 			var vec = map2dContainerTo3dFloorPos(input.cx, input.cy);
@@ -576,7 +595,7 @@ mpscene = (function () {
 				var scale = (initParams.perspectiveW + z) / initParams.perspectiveW;
 				var midx = relcoord.scale*relcoord.cwhalf;
 				var x = (input.ax-midx) * scale;
-				var y = relcoord.scale*relcoord.vfy;	
+				var y = relcoord.scale*(relcoord.vfy-relcoord.phhalf);	
 				graph.panim.target = [x,y,z];
 				setPetAnimKeys(animKeySeq.walk);
 			}
@@ -633,8 +652,8 @@ mpscene = (function () {
 	}
 
 	function map2dContainerTo3dFloorPos(cx, cy) {
-		// assume screenspace item container is scaled rect=[0,70,320,130]
-		var itemedge = 70*relcoord.scale;
+		// ignore clicks near item selection container 
+		var itemedge = relcoord.iabove*relcoord.scale;
 		if(cy<itemedge) return null;
 
 		// map the screen area below items to a 3d floor position.
@@ -644,7 +663,7 @@ mpscene = (function () {
 		var scale = (initParams.perspectiveW + z) / initParams.perspectiveW;
 		var midx = relcoord.cwhalf * relcoord.scale;
 		var x = (cx-midx) * scale;
-		// todo: proper map from screen y, near wall limit + floor plane pos - half sprite height
+		// todo: remove unused y setting? (proper map from screen y needs floor plane pos - half sprite height
 		var y = relcoord.scale*relcoord.vfy;	
 		return [x,y,z];
 	}
@@ -702,7 +721,7 @@ mpscene = (function () {
 
 		// images
 		var imgTest = img.think; 
-		var imgSheet = img.anim0; 
+		var imgSheet = img.anim[0]; 
 		ctx.drawImage(imgTest, 150, 100, 40, 60);
 		// draw using src & dest rects: (image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
 		var sframe=0;
@@ -856,15 +875,17 @@ mpscene = (function () {
 				list[i].spr.rect = [xd, yd+dpsize*i, dsize, dsize];
 			} else {
 				if(usepos3d) {
-					//var pos = [list[i].pos[0], 20, list[i].pos[1]];
 					// sprite y pos depends on floor pos, item height & base in image (not necessarily bottom as there might be a shadow)
-					var wh = list[i].item.wh;
-					var pos = [list[i].pos[0], 41-wh[1]*0.25, list[i].pos[1]];
+					var wh = [0,0];
+					scaleArrayAssign(wh, list[i].item.wh, relcoord.scale);
+					var floory = relcoord.vfy * relcoord.scale;
+					var pos = [list[i].pos[0], floory-wh[1]*0.25, list[i].pos[1]];
 					list[i].spr.vec = pos;
 					list[i].spr.sizehalf = [wh[0]*0.5, wh[1]*0.5];
 					list[i].spr.rect = [];
 				} else if(usepos2d) {
-					var wh = list[i].item.wh;
+					var wh = [0,0];
+					scaleArrayAssign(wh, list[i].item.wh, relcoord.scale);
 					list[i].spr.rect = [list[i].pos[0]-wh[0]*0.5, list[i].pos[1]-wh[1]*0.5, wh[0], wh[1]];
 				} else {
 					list[i].spr.rect = [xd+dpsize*i, yd, dsize, dsize];						
