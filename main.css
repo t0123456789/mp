@@ -5,7 +5,7 @@ body {
 }
 
 div.qbox {
-    height:100px;
+    min-height:100px;
     padding: 0px;
     text-align:center;
     vertical-align: middle;
@@ -57,3 +57,7 @@ span.ibgreyout {
 	line-height: 24px;
   }
   
+*:focus {
+    outline: none;
+}
+

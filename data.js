@@ -24,7 +24,7 @@
         current: null,
 
         menu: function(n) {
-            var q = this.tutorial; //this.quiz4;
+            var q = this.quizempty; //this.tutorial; //this.quizempty;
             if(n) {
                 if(n.num===1) { q = this.scenemenu; }		
                 if(n.num===2) { q = this.comp1; }		
@@ -172,12 +172,17 @@
 			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
         ]},
 
-        quiz4: { name:"empty", steps:0, level:0,
-        short:'<p>practice level for brain training + pet game.</p>',
+        quizempty: { name:"empty", steps:0, level:0,
+        short:'<p>For testing only</p>',
         sprite:{ img:"url('img/npchelp.png')", clip:"rect(20px,40px,60px,0px)" }, //rect (top, right, bottom, left) 
-        help:"After completing this you will have earned some coins and see various options to relax with your pet or train some more!",
+        help:"quick jump to main menu, test level",
 		arr:[
-			{ q: "Hello! Which player?", opt:[ "( \\__/ )<br>( ᵔ ᴥ ᵔ )", "/\\.../\\<br>(o . o)", "&nbsp;<br>~{'v'}~", "( )__( )<br>( ᵔ ᴥ ᵔ )" ], a:0, val:0 },
+			{ q: "Ready to start?<br>Click on a box to choose a pet.", opt:[ 
+                '<img width="100%" height="100%" src="img/p0.jpg">', 
+                '<img width="100%" height="100%" src="img/p1.jpg">', 
+                '<img width="100%" height="100%" src="img/p2.jpg">', 
+                '<img width="100%" height="100%" src="img/p3.jpg">' ], 
+                a:0, val:0 },   
 			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
 		]},
     	

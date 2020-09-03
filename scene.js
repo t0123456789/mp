@@ -27,6 +27,26 @@ mpscene = (function () {
 		ctx: null,
 	};
 
+	// these coordinates are scaled depending on canvas width, which depends on viewport, device width
+	var relcoord = {
+		scale: 1,
+		cw: 320,
+		cwhalf: 160,
+		ch: 200,
+		cfy: 140,
+		vfy: 14,
+		pw: 50,
+		ph: 50,
+		pwhalf: 25,
+		phhalf: 25,
+	}
+
+	// these are fixed sizes of assets
+	var pxsize = {
+		petanim: 200,
+		smallitem: 40,
+	}
+
 	var graph = {
 		cam: 0,
 		fgrid: [],
@@ -34,7 +54,8 @@ mpscene = (function () {
 
 		prect: [260,170,50,60],
 		pvec: [0,20,-5],
-		psprite: { img:null, sheet:{grp:0, frame:2, size:40}, rect:[], sizehalf:[25,30] }, // {img:img.pet, rect:[], vec:graph.pvec, sizehalf:[25,30]};
+		psprite: { img:null, sheet:{grp:0, frame:2, size:pxsize.petanim}, rect:[], sizehalf:[25,25] }, // {img:img.pet, rect:[], vec:graph.pvec, sizehalf:[25,30]};
+		//psprite: { img:null, sheet:{grp:0, frame:2, size:40}, rect:[], sizehalf:[25,30] }, // {img:img.pet, rect:[], vec:graph.pvec, sizehalf:[25,30]};
 		panim: { type:"none", speed:32, click:[0,0], target:[0,0,0], key:null },
 		paction: { type:"none", },
 		pstate: { fed:0, yestfed:1, spark:0, sleep:false, buff:[], },
@@ -56,27 +77,23 @@ mpscene = (function () {
 	};
 
 	var animKeySeq = {
-		walk: { len:8, // number of keyframes
-			keyframe0:{grp:0, frame:0, size:40}, // position of first key frame in anim sprite sheet (assume other keys are next in sprite sheet)
-			loop:true, n:0, seq:[2,1,0,1,2,3,4,3], // sequence of frames to be played
+		walk: { len:4, // number of keyframes
+			keyframe0:{grp:0, frame:0, size:pxsize.petanim}, // position of first key frame in anim sprite sheet (assume other keys are next in sprite sheet)
+			loop:true, n:0, seq:[0,1,2,3], // sequence of frames to be played
 			idle:2,		// animation end with this frame
 		},
 		eathappy: { len:15, 
-			keyframe0:{grp:1, frame:0, size:40}, 
-			loop:false, n:0, seq:[0,1,0,1,0,1,2,1,2,1,0,1,2,1,3], 
+			keyframe0:{grp:1, frame:0, size:pxsize.petanim}, 
+			//keyframe0:{grp:1, frame:0, size:40}, 
+			loop:false, n:0, seq:[0,1,0,1,0,1,0,1,2,1,0,1,2,1,2], 
 		},
 		eatsad: { len:7, 
-			keyframe0:{grp:1, frame:0, size:40}, 
-			loop:false, seq:[0,1,0,1,0,1,4], 
+			keyframe0:{grp:1, frame:0, size:pxsize.petanim}, 
+			loop:false, seq:[0,1,0,1,0,1,3], 
 		},
 		clean: { len:16, 
-			keyframe0:{grp:2, frame:0, size:40}, 
-			loop:false, seq:[0,1,2,1,0,1,2,1,0,1,2,3,4,3,2,1],
-		},
-		nap: { len:2, 
-			keyframe0:{grp:3, frame:0, size:40},
-			loop:true, n:0, seq:[0,1],
-			idle:1, 
+			keyframe0:{grp:2, frame:0, size:pxsize.petanim}, 
+			loop:false, seq:[0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
 		},
 	};
 
@@ -399,6 +416,12 @@ mpscene = (function () {
 		}
 		initParams.ctx = ctx;
 
+		// calculate scale factor for relative screen coordinates
+		// assume aspect ratio is same...
+		if(initParams.w !== 320) {
+			relcoord.scale = initParams.w / 320;
+		}
+
 		// fix up pre loaded assets
 		img.pet = document.getElementById("imgp0b");
 		img.shop = document.getElementById("imgshop");
@@ -551,8 +574,9 @@ mpscene = (function () {
 				// reset target, map screen space picking coord to 3d floor position
 				var z = 5-input.ay;
 				var scale = (initParams.perspectiveW + z) / initParams.perspectiveW;
-				var x = (input.ax-160) * scale;
-				var y = 14;	
+				var midx = relcoord.scale*relcoord.cwhalf;
+				var x = (input.ax-midx) * scale;
+				var y = relcoord.scale*relcoord.vfy;	
 				graph.panim.target = [x,y,z];
 				setPetAnimKeys(animKeySeq.walk);
 			}
@@ -609,15 +633,19 @@ mpscene = (function () {
 	}
 
 	function map2dContainerTo3dFloorPos(cx, cy) {
-		// assume screenspace container rect=[0,70,320,130]
-		if(cy<70) return null;
+		// assume screenspace item container is scaled rect=[0,70,320,130]
+		var itemedge = 70*relcoord.scale;
+		if(cy<itemedge) return null;
 
 		// map the screen area below items to a 3d floor position.
-		// assume the floor horizon is at cy=140
-		var z = (cy<141)? 0:(140-cy)*3;
+		// floor horizon is at scaled floor coord
+		var horiz = relcoord.cfy * relcoord.scale;
+		var z = (cy<(horiz+1))? 0:(horiz-cy)*3;
 		var scale = (initParams.perspectiveW + z) / initParams.perspectiveW;
-		var x = (cx-160) * scale;
-		var y = 14;	// near wall limit + floor plane pos - half sprite height	
+		var midx = relcoord.cwhalf * relcoord.scale;
+		var x = (cx-midx) * scale;
+		// todo: proper map from screen y, near wall limit + floor plane pos - half sprite height
+		var y = relcoord.scale*relcoord.vfy;	
 		return [x,y,z];
 	}
 
@@ -861,24 +889,29 @@ mpscene = (function () {
 
 	function drawFarBackground(ctx) {
 		// Create gradient 
-		var lingrad = ctx.createLinearGradient(0, 0, 0, 200); // gradient between start and end points (startx,starty,endx,endy)
+		var w = relcoord.scale * relcoord.cw;
+		var h = relcoord.scale * relcoord.ch;
+		var lingrad = ctx.createLinearGradient(0, 0, 0, h); // gradient between start and end points (startx,starty,endx,endy)
 		lingrad.addColorStop(0, '#00ABEB');	// setup interpolate color from start=0 to end=1
 		lingrad.addColorStop(0.7, '#eeeeff');
 		lingrad.addColorStop(0.7, '#aaffaa');
 		lingrad.addColorStop(1, '#26C000');
 		ctx.fillStyle = lingrad;
-		ctx.fillRect(0, 0, 320, 200);
+		ctx.fillRect(0, 0, w, h);
 	}
 
 	function drawNormalBackground(ctx) {
 		drawFarBackground(ctx);
 		drawItems(ctx,"wallnormal");
 		// redraw floor colour to emulate clip / 3d
-		var lingrad = ctx.createLinearGradient(0, 139, 0, 200); // gradient between start and end points (startx,starty,endx,endy)
+		var w = relcoord.scale * relcoord.cw;
+		var h = relcoord.scale * relcoord.ch;
+		var fh = relcoord.scale * relcoord.cfy;
+		var lingrad = ctx.createLinearGradient(0, fh, 0, h);
 		lingrad.addColorStop(0, '#aaffaa');
 		lingrad.addColorStop(1, '#26C000');
 		ctx.fillStyle = lingrad;
-		ctx.fillRect(0, 140, 320, 200);
+		ctx.fillRect(0, fh, w, h);
 		drawItems(ctx,"floornormal");
 	}
 
@@ -919,8 +952,13 @@ mpscene = (function () {
 		lingrad.addColorStop(0.75, '#80cc80');
 		lingrad.addColorStop(1, '#26C000');
 		ctx.fillStyle = lingrad;
-		ctx.fillRect(0, 0, 320, 200);
-		ctx.drawImage(img.shop, 0, 0, 110, 200);
+
+		var w = relcoord.scale * relcoord.cw;
+		var h = relcoord.scale * relcoord.ch;
+		var fh = relcoord.scale * relcoord.cfy;
+
+		ctx.fillRect(0, 0, w, h);
+		ctx.drawImage(img.shop, 0, 0, h*0.6, h);
 		var imgib = img.speech;
 		drawItems(ctx, "shop", imgib);
 	}
@@ -1008,6 +1046,7 @@ mpscene = (function () {
 		//var s = {img:img.pet, rect:[], vec:graph.pvec, sizehalf:[25,30]};
 		var s = graph.psprite;
 		s.rect=[];
+		s.sizehalf = [relcoord.scale*relcoord.pwhalf, relcoord.scale*relcoord.phhalf];
 		s.vec=graph.pvec;
 		drawSprite(ctx, s, noList);
 		
@@ -1056,10 +1095,7 @@ mpscene = (function () {
 					setTimeout(iconHide, 2000);
 				}
 			}
-
-			
 		}
-		
 	}		
 
 	function iconPos(iconSkin, x, y) {
