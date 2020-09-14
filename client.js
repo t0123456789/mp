@@ -16,14 +16,11 @@ mpclient = (function () {
 		vsetBlockDisplay("timer", false);
 		vsetQA(0);
 		setState("start");
+
 		mpmodal();
-
-		//mpdata();
-
 		client.genprac = new mpgame.aiLevel(client.qstate.sprac, mpdatapatch, true);
 		client.gencomp = new mpgame.aiLevel(client.qstate.scomp, mpdatapatch);
-
-		client.genprac.getMenuPatched(0);
+		//client.genprac.getMenuPatched(0);
 
 		client.scard.prog = client.prog;
 		client.scard.pstate = client.pstate;
@@ -168,12 +165,9 @@ function menuUpdate(n){
 				break;
 			case 1:
 				// single player 
-				client.quiz = menuInit(3);	// todo: generate random quiz instead of default
-				//client.prog.qnum = 1;
+				client.quiz = menuInit(3);
 				sceneFinish();
 				vsetAxStyle("ib");
-				//vsetAxStyle("coin");
-				//vsetQA(1);
 				vsetQA(0);
 				vsetIS("startlevel");
 				setState("startsp");
@@ -399,7 +393,6 @@ function updatePetDay(){
 		mpscene.updateShop(idxlist);
 	}
 }
-
 
 function nextAction(n){	
 	var q = client.quiz.arr[client.prog.qnum];
@@ -816,7 +809,7 @@ function multiplayResults() {
 	// set text containing player results for modal dialog...
 	var txt = { short:null , help:"", info:" " };
 	txt.help += rank.txt;
-	txt.help += '('+mpdata.txt.fini.penalty + tpenalty +'ms)';
+	txt.help += '('+mpdata.txt.fini.penalty + Math.round(tpenalty) +'ms)';
 	txt.info += rank.info;
 
 	switch(rank.log.pos) {
@@ -1156,12 +1149,6 @@ function feedbackShop(res,num) {
 		var infoelem = document.getElementById("infotext");
 		
 		if(info=="reset"){
-			// client.prog.coins = 0;
-			// client.prog.strike = 0;
-			// client.prog.acc = 0;
-			// client.prog.level = 0;	
-			// client.prog.star = 0;	
-
 			infoelem.innerHTML = "Click the answer:";	
 			vsetElemBlockDisplay(infoelem, true);
 			vsetBlockDisplay("scoretext", true);

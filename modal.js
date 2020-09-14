@@ -77,25 +77,32 @@
             textshortelem.innerHTML += '<p>Pet days played:'+p.tday+' Awards:'+p.qstate.award+'</p>';
             //textshortelem.innerHTML += '<p>Average score: (%)    </p>';
 
+            if(p.qstate.log.length>0) {
+                var maxListLen = 20;
+                var len = (p.qstate.log.length<maxListLen)? p.qstate.log.length : maxListLen;
+                var idx = p.qstate.log.length-1;
+                textelem.innerHTML = '<ul>';
             var i;
-            var ncomp = "", nprac = "";
-            for(i=0; i<5; ++i) {
-                ncomp += p.qstate.scomp[i][0]+',';
-                nprac += p.qstate.sprac[i][0]+',';
+                for(i=0; i<len; ++i) {
+                    var lg = p.qstate.log[idx];
+                    idx = idx - 1;
+                    textelem.innerHTML += '<li> L'+lg.level+' '+lg.name+' '+lg.score+'</li>';
+                    textelem.innerHTML += '<li> L'+lg.level+' '+lg.name+' '+lg.score+'</li>';
+                    textelem.innerHTML += '<li> L'+lg.level+' '+lg.name+' '+lg.score+'</li>';
+                }
+                textelem.innerHTML += '</ul>';
             }
             
+            var di;
+            var ncomp = "", nprac = "";
+            for(di=0; di<5; ++di) {
+                ncomp += p.qstate.scomp[di][0]+',';
+                nprac += p.qstate.sprac[di][0]+',';
+            }
             textelem.innerHTML += mpdata.txt.card.comp + ncomp;
             textelem.innerHTML += mpdata.txt.card.prac + nprac;
 
-            var i;
-            for(i=0; i<p.qstate.log.length; ++i) {
-                var lg = p.qstate.log[i];
-                textelem.innerHTML += '<br>log '+lg.level+': '+lg.name+' '+lg.score;
-            }
 
-            //textelem.innerHTML += mpdata.txt.card.unlock;
-            //textelem.innerHTML += mpdata.txt.card.opt;
-            //textelem.innerHTML += mpdata.txt.card.more;
 
             modal.style.display = "block";
         }

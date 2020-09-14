@@ -10,6 +10,7 @@ mpscene = (function () {
 		cy: 0,
 		ax: 160,
 		ay: 0,
+		time: 0,
 	};
 			
 	window.onmousemove = function(e) {
@@ -99,7 +100,7 @@ mpscene = (function () {
 		},
 		clean: { len:16, 
 			keyframe0:{grp:2, frame:0, size:pxsize.petanim}, 
-			loop:false, seq:[0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+			loop:false, seq: [0,1,2,1,2,1,2,1,0,1,2,1,2,1,2,1],
 		},
 	};
 
@@ -111,6 +112,9 @@ mpscene = (function () {
 			{idx:5, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[0, 100, 50, 50] },
 			{idx:2, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[90, 80, 50, 50] },
 			{idx:4, item:null, spr:null, dec:2, dlink:0, slink:0, pos:[100, 0, 80, 150] },
+			{idx:9, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[0, 0, 320, 150] },
+			//{idx:10, item:null, spr:null, dec:0, dlink:0, slink:0, pos:[0, 150, 320, 50] },
+			{idx:11, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[10, 70, 300, 40] },
 		],
 
 		wall:[],
@@ -133,8 +137,22 @@ mpscene = (function () {
 		return graph.pstate;
 	}
 
-	function getItemSlots() {
+	function getItemSlots(src) {
+		if(!src) {
 		return itemdisp.slot;
+	}
+
+		itemdisp.slot = src;
+
+		// fix up references to items, sprite img etc
+		for(i=0; i<src.length; ++i){
+			var itm = mpdata.items.all[list[i].idx];
+			src[i].item = itm;
+			var img = document.getElementById(itm.img);
+			var spr= {img:img, sheet:null, rect:[]};
+			if(itm.sheet) spr.sheet = itm.sheet;
+			src[i].spr = spr;				
+		}
 	}
 
 	function setPetNextDay() {
@@ -156,7 +174,6 @@ mpscene = (function () {
 		}
 		else if(act==="clean") {
 			graph.panim.type = "short";
-			//graph.panim.key = animKeySeq.clean;
 			setPetAnimKeys(animKeySeq.clean);
 
 			if(!graph.pstate.sleep)
@@ -463,6 +480,8 @@ mpscene = (function () {
 		var ok = checkParams(canvas, ctx);
 		if(!ok) return;
 
+		input.time = new Date().getTime();
+
 		if(!sg) {
 			drawTestScene(ctx);
 			return;
@@ -577,7 +596,9 @@ mpscene = (function () {
 				graph.psprite.sheet.frame = k.seq[nframe];
 				var next = nframe+1;
 				if(next===k.len) {
-					setPetAnimKeys(null);
+					//setPetAnimKeys(null);
+					graph.panim.type="follow";
+					setPetAnimKeys(animKeySeq.walk);
 				}
 				else{					
 					k.n = next;
@@ -1062,9 +1083,6 @@ mpscene = (function () {
 
 	function drawPet(ctx, noList) {
 		// default is to add pet sprite to sprite list (nolist=null)
-
-		//var s = {img:img.pet, rect:[], vec:[0,20,-180], sizehalf:[25,30]};
-		//var s = {img:img.pet, rect:[], vec:graph.pvec, sizehalf:[25,30]};
 		var s = graph.psprite;
 		s.rect=[];
 		s.sizehalf = [relcoord.scale*relcoord.pwhalf, relcoord.scale*relcoord.phhalf];
@@ -1089,6 +1107,8 @@ mpscene = (function () {
 		}			
 
 		function updateInputCanvasXY(e) {
+			input.time = new Date().getTime();
+
 			if(canvas.getBoundingClientRect){
 				var r = canvas.getBoundingClientRect();
 				input.rx = r.left;

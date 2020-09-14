@@ -10,25 +10,18 @@
 (function() {
     "use strict";
 
-    //var patch = null;
-    //var copy = null;
-
-    function mpdata() {
-        //if(!patch) {
-        //    patch = window.mpdatapatch;
-        //}
-    };
-
+    function mpdata() {};
     // game data for initial menu dialog and quiz
     mpdata.init = {
         current: null,
 
         menu: function(n) {
-            var q = this.quizempty; //this.tutorial; //this.quizempty;
+            var q = this.tutorial; //this.quizempty;
             if(n) {
                 if(n.num===1) { q = this.scenemenu; }		
                 if(n.num===2) { q = this.comp1; }		
                 if(n.num===3) { q = this.quizAdd; }	
+                if(n.num===4) { q = this.continue; }	
                 	
                 if(n.ref) {
                     // override any settings if there is a data reference 
@@ -43,7 +36,7 @@
         short:'<p>MathPets:<br>A brain training + pet game.</p>',
         sprite:{ img:"url('img/npchelp.png')", clip:"rect(20px,40px,60px,0px)" }, //rect (top, right, bottom, left) 
         help:'<p>Begin by choosing your pet, then read each question carefully and click on an answer.</p>'+
-            '<p>After completing this practice level you will have earned some coins and have options to set up your Key Stage, relax with your pet or train some more.</p>'+
+            '<p>After completing this practice level you will have earned some coins and have options to set up your Key Stage, train some more or relax with your pet.</p>'+
             '<p><em>Game Tips</em><p>Your pet is always happy to practice with you! Don\'t worry if you make a mistake; just try again.</p>'+
             '<p>(add footer contact / link.)</p>',
 		arr:[
@@ -56,8 +49,8 @@
                a:0, val:0 },            
             { q: 'There are 3 questions in this tutorial.<br>Question 1:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 1 + 1 = ? &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp', opt:[ "1", "2", "3", "0" ], a:1, val:2 },
 			{ q: 'Question 2:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 10 - 2 = ? &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp', opt:[ "5", "8", "6", "12" ], a:1, val:8 },
-			{ q: "Last question:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 7 × 8 = ? &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp ", opt:[ "48", "68", "56", "58" ], a:2, val:56 },
-			{ q: "Tutorial finished!<br>Click <b>[next]</b> to set your Key Stage or <b>[pet]</b> to interact with your pet.", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
+			{ q: "Last question:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 7 + ? = 10 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp ", opt:[ "5", "4", "3", "2" ], a:2, val:3 },
+			{ q: "Tutorial finished!<br>Click <b>[next]</b> to set your Key Stage and practice more.<br>Click <b>[pet]</b> to interact with your pet.", opt:[ "options", "next", "pet", "compete" ], a:0, val:0 },
 		]},
 		
         scenemenu: { name:"pets", steps:0, level:0, uid:2,
@@ -65,7 +58,7 @@
         help:'<p>Click <b>[shop]</b> to buy items using your coins. The items change each day.</p>'+
         '<p>Use <b>[items]</b> to care for your pet. Your pet needs to eat the correct amount to stay alert.</p>'+
         '<p>You can <b>[decor]</b>ate your pet\'s home using certain items. To arrange items on the wall or floor click the item you want to move then click where you want to put it.</p>'+
-        '<p><em>Game Tips</em></p><p>With regular care your pet can sparkle when you go into training and get buffs earlier. While under or over eating can cause sleepiness.</p>'+
+        '<p><em>Game Tips</em></p><p>With regular care your pet can sparkle when you go into training and get buffs earlier, while under or over feeding can cause sleepiness.</p>'+
         '<p>(add footer contact / link.)</p>',
 		arr:[
 			{ q: "Pets love to relax after training! Something to do?", opt:[ "back", "shop", "decor", "items" ], 
@@ -122,6 +115,14 @@
 			{ q: "Finished!", opt:[ "reset", "next", "pet", "compete" ], a:0, val:0 },
         ]},
 
+        continue: { name:"continue", steps:0, level:0, uid:5,
+        short:'<p>Click <b>[next]</b> to practice at your chosen Key Stage or <b>[pet]</b> to interact with your pet.</p>',
+        help:'<p>Click <b>[compete]</b> to test your speed and accuracy against 3 AI players.</p>'+
+        '<p><em>Game Tips</em></p><p>With regular care your pet will be happy when you go into training. You can tell how your pet feels by observing its reactions when you feed or stroke it.</p>'+
+        '<p>(add footer contact / link.)</p>',
+		arr:[
+            { q: "Ready to continue?<br>Click <b>[next]</b> or <b>[compete]</b> to train.<br>Click <b>[pet]</b> to interact with your pet.", opt:[ "options", "next", "pet", "compete" ], a:0, val:0 },
+        ]},
 		
         comp1: { name:"ArithMix", steps:8, level:0, uid:10, tpqmax:5,
         short:"Compete with 3 AI players on a mixture of arithmetic questions. You need to be fast and accurate to win.",
@@ -214,6 +215,11 @@
             { name:"bubbles", buy:100, wh:[40,40], img:"imgsmall", sheet:{grp:1, frame:1, size:40}, actions:[af.clean], desc:"Dissolves stubborn dirt and smells." },
             { name:"treat", perish:true, buy:20, wh:[40,40], img:"imgsmall", sheet:{grp:1, frame:2, size:40}, actions:[af.feed], desc:"A crunchy high energy snack." },
             { name:"brush", buy:100, wh:[40,40], img:"imgsmall", sheet:{grp:1, frame:3, size:40}, actions:[af.clean|af.floor|af.wall], desc:"Brushing keeps fur in good condition." },
+ 
+            { name:"backdrop", buy:100, wh:[320,150], img:"imgwall", actions:[af.wall], desc:"test wall cover." },
+            { name:"carpet", buy:100, wh:[320,50], img:"imgfloor", actions:[af.floor], desc:"test floor cover." },
+            { name:"fence", buy:100, wh:[300,40], img:"imglong", actions:[af.floor|af.wall], desc:"test fence width < 320." },
+            { name:"tree2", buy:100, wh:[80,150], img:"imgtall0", actions:[af.floor|af.wall], desc:"tree2." },
             
             { name:"trophy", wh:[40,40], img:"img7", actions:[af.floor|af.wall], desc:"Award for winning a mixed topic competition." },
             { name:"stripe", wh:[40,40], img:"img7", actions:[af.floor|af.wall], desc:"Award for winning an addition competition." },
