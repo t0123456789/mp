@@ -40,6 +40,7 @@ mpscene = (function () {
 		ph: 50,
 		pwhalf: 25,
 		phhalf: 25,
+		arrowsize: 20,
 		iconsize: 24,
 		iabove: 70,
 		lowrect: [0,140,320,60],
@@ -86,8 +87,8 @@ mpscene = (function () {
 	var animKeySeq = {
 		walk: { len:4, // number of keyframes
 			keyframe0:{grp:0, frame:0, size:pxsize.petanim}, // position of first key frame in anim sprite sheet (assume other keys are next in sprite sheet)
-			loop:true, n:0, seq:[0,1,2,3], // sequence of frames to be played
-			idle:2,		// animation end with this frame
+			loop:true, n:0, seq:[1,2,3,4], // sequence of frames to be played
+			idle:0,		// animation end with this frame
 		},
 		eathappy: { len:15, 
 			keyframe0:{grp:1, frame:0, size:pxsize.petanim}, 
@@ -139,8 +140,8 @@ mpscene = (function () {
 
 	function getItemSlots(src) {
 		if(!src) {
-		return itemdisp.slot;
-	}
+			return itemdisp.slot;
+		}
 
 		itemdisp.slot = src;
 
@@ -279,6 +280,7 @@ mpscene = (function () {
 		itemdisp.select.active = false; 
 		itemdisp.select.aabb = null;
 		if(redraw && graph.middle) graph.middle(initParams.ctx);
+		drawSpriteList(initParams.ctx);
 	}
 
 	function setActionFeedback() {
@@ -291,7 +293,7 @@ mpscene = (function () {
 	function dispItemHit(x, y, act) {
 		if(!itemdisp.select.active){
 			// no selected item atm, check all possible items 
-			var ret = hitAabb(x, y);
+			var ret = hitAabb(x, y, false, true);
 			if(ret.hit) {
 				itemdisp.select.active = true;
 				itemdisp.select.aabb = ret.aabb;
@@ -315,7 +317,7 @@ mpscene = (function () {
 			// an item is already selected, check which container was hit
 			// this should only happen in wall/floor editing
 			var si = itemdisp.select.aabb;
-			var ret = hitAabb(x, y, true);
+			var ret = hitAabb(x, y, true, false);
 			if(si.dec===0) {
 				// a slot item was selected
 				if(ret.hit) {
@@ -387,11 +389,12 @@ mpscene = (function () {
 		ctx.stroke();
 	}
 
-	function hitAabb(x, y, container) {
+	function hitAabb(x, y, container, smallest) {
 		var begin = (container)? 0:2;
 		var end = (container)? 2:graph.aabb.length;
 		var hit = false;
 		var aabb = null;
+		var minw = 99999999;   // aabb width = xright-xleft
 		var i;
 		for(i=begin; i<end; ++i) {
 			if(graph.aabb[i]) {
@@ -399,8 +402,18 @@ mpscene = (function () {
 				if(r[0]<x && r[1]>x) {
 					if(r[2]<y && r[3]>y) {
 						hit = true;
-						aabb = graph.aabb[i];
-						break;
+						if(smallest) {
+							// check each hit and return the smallest width box
+							var bwidth = graph.aabb[i].box[1]-graph.aabb[i].box[0];
+							if(bwidth<minw) {
+								aabb = graph.aabb[i];
+								minw = bwidth;
+							}
+						} else {
+							// return the first hit
+							aabb = graph.aabb[i];
+							break;
+						}
 					}
 				} 
 			}
@@ -483,7 +496,7 @@ mpscene = (function () {
 		input.time = new Date().getTime();
 
 		if(!sg) {
-			drawTestScene(ctx);
+			//drawTestScene(ctx);
 			return;
 		}
 
@@ -710,57 +723,6 @@ mpscene = (function () {
 		vec3[0] += dx;
 		vec3[2] += dz;	
 	}
-
-	function saveToFile(canvas) {
-		var dataURL = canvas.toDataURL();
-		var fullQuality = canvas.toDataURL('image/jpeg', 1.0);
-		// data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ...9oADAMBAAIRAxEAPwD/AD/6AP/Z"
-		var mediumQuality = canvas.toDataURL('image/jpeg', 0.5);
-		var lowQuality = canvas.toDataURL('image/jpeg', 0.1);
-	}
-
-	function drawTestScene(ctx) {
-		// filled, erased then outlined
-		ctx.fillStyle = 'rgb(0, 255, 0)';
-		ctx.fillRect(25, 25, 70, 70);
-		ctx.clearRect(45, 45, 55, 55);
-		ctx.strokeRect(50, 50, 50, 50);
-		// intersecting rects, opaque red & transparent blue
-		ctx.fillStyle = 'rgb(200, 0, 0)';
-		ctx.fillRect(10, 110, 50, 50);	// xy origin is left,top corner. rect params are: (posx,posy,w,h)
-		ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
-		ctx.fillRect(30, 130, 50, 50);
-
-		// Create gradient 
-		var lingrad = ctx.createLinearGradient(0, 0, 0, 200); // gradient between start and end points (startx,starty,endx,endy)
-		lingrad.addColorStop(0, '#00ABEB');	// setup interpolate color from start=0 to end=1
-		lingrad.addColorStop(0.8, '#fff');
-		lingrad.addColorStop(0.8, '#a6e0ff');
-		lingrad.addColorStop(1, '#26C000');
-		ctx.fillStyle = lingrad;
-		ctx.fillRect(150, 0, 150, 200);
-
-		// images
-		var imgTest = img.think; 
-		var imgSheet = img.anim[0]; 
-		ctx.drawImage(imgTest, 150, 100, 40, 60);
-		// draw using src & dest rects: (image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-		var sframe=0;
-		var sfrmax=5;
-		var ssize = 40;
-		var dsize = 50;
-		for(sframe=0; sframe<sfrmax; ++sframe){
-			var s = { img:imgSheet, sheet:{grp:0, frame:sframe, size:ssize}, rect:[10+52*sframe, 100, dsize, dsize] };
-			blitSpriteFrame(ctx, s);
-			//ctx.drawImage(imgSheet, sframe*ssize, sgrp*ssize, ssize, ssize, 10+52*sframe, 0, dsize, dsize);
-		}
-
-		drawWallDecor(ctx);
-
-		var box = [10,70,30,90];
-		drawSelectionBox(box);
-	}
-	
     
     function wrapText(context, text, x, y, maxWidth, lineHeight) {
  
@@ -772,12 +734,12 @@ mpscene = (function () {
 			var metrics = context.measureText(testLine);
 			var testWidth = metrics.width;
 			if (testWidth > maxWidth && n > 0) {
-			context.fillText(line, x, y);
-			line = words[n] + ' ';
-			y += lineHeight;
+				context.fillText(line, x, y);
+				line = words[n] + ' ';
+				y += lineHeight;
 			}
 			else {
-			line = testLine;
+				line = testLine;
 			}
 		}
 		context.fillText(line, x, y);
@@ -785,7 +747,7 @@ mpscene = (function () {
 
 
 	function drawItems(ctx, place, background) {
-		var dfn = blitSpriteFrame;
+		var dfn = blitSpriteToHud;//blitSpriteFrame;
 		var list = itemdisp.slot;
 		var list = itemdisp.found;
 		var dock = itemdisp.highrect;
@@ -835,17 +797,20 @@ mpscene = (function () {
 				graph.aabb[0] = { box:calcBoundingBox(s), dec:0, n:0 };
 				break;
 			case "wallnormal":
+				dfn = blitSpriteToWall;
 				list = itemdisp.wall;
 				usepos2d = true;
 				aabb = false;
 				break;
 			case "walldecor":
+				dfn = blitSpriteToWall;
 				list = itemdisp.wall;
 				usepos2d = true;
 				var s = {rect:itemdisp.rectwall};
 				graph.aabb[1] = { box:calcBoundingBox(s), dec:1, n:0 };
 				break;
 			case "shop":
+				dfn = blitSpriteFrame;
 				msg = mpdata.items.msg[2];
 				list = itemdisp.shop;
 				dock = itemdisp.siderect;
@@ -854,7 +819,9 @@ mpscene = (function () {
 		}
 
 		if(background) {
-			ctx.drawImage(background, dock[0], dock[1], dock[2], dock[3]);
+			var backspr= {img:background, sheet:null, rect:dock};
+			dfn(ctx, backspr);
+			//ctx.drawImage(background, dock[0], dock[1], dock[2], dock[3]);
 		}
 
 		var msize = 0;
@@ -965,8 +932,10 @@ mpscene = (function () {
 		// draw action usable items
 		var act = graph.paction.type;
 		if(act==="wall") {
+			clearSpriteList();
 			graph.background(ctx);
 			drawItems(ctx,"walldecor");
+			drawSpriteList(ctx);
 		} else if(act==="floor") {
 			clearSpriteList();
 			graph.background(ctx);
@@ -981,11 +950,11 @@ mpscene = (function () {
 		}
 	}
 
-	function drawWallDecor(ctx) {
-		drawItems(ctx,"wallnormal");
-		var imgib = img.think;
-		drawItems(ctx,"wall", imgib);
-	}
+	// function drawWallDecor(ctx) {
+	// 	drawItems(ctx,"wallnormal");
+	// 	var imgib = img.think;
+	// 	drawItems(ctx,"wall", imgib);
+	// }
 
 	function drawShop(ctx) {
 		var lingrad = ctx.createLinearGradient(0, 0, 0, 200); // gradient between start and end points (startx,starty,endx,endy)
@@ -1052,10 +1021,28 @@ mpscene = (function () {
 		}
 	}
 
+	function blitSpriteToWall(ctx, s) {
+		// do not project from 3d, copy the preset rect and z sort setting to draw list 
+		// back wall z=0, so to order wall items by width, set z positive & directly proportional to width
+		s.vec = [0,0,s.rect[2]];
+		var cs = copySprite(s);
+		graph.sprites.push(cs);
+	}
+
+	function blitSpriteToHud(ctx, s) {
+		// do not project from 3d, copy the preset rect and z sort setting to draw list 
+		// front plane z~-400, order hud items in front of this, large width behind small
+		var z = -400 - (640-s.rect[2]);
+		s.vec = [0,0,z];
+		var cs = copySprite(s);
+		graph.sprites.push(cs);
+	}
+
 	function copySprite(s) {
 		var clone = { img:s.img, rect:[s.rect[0], s.rect[1], s.rect[2], s.rect[3]], 
 			sheet:null, 
-			vec:[s.vec[0],s.vec[1],s.vec[2]], sizehalf:[s.sizehalf[0],s.sizehalf[1]] };
+			vec:[s.vec[0],s.vec[1],s.vec[2]] };
+			//vec:[s.vec[0],s.vec[1],s.vec[2]], sizehalf:[s.sizehalf[0],s.sizehalf[1]] };
 
 		var ss = s.sheet;
 		if(ss) {
