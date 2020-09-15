@@ -40,11 +40,10 @@ mpscene = (function () {
 		ph: 50,
 		pwhalf: 25,
 		phhalf: 25,
-		arrowsize: 20,
-		iconsize: 24,
+		iconsize: [40, 2, 19, 16, 20],	// for icon size,spacing,placement etc [item,itempad,msgpad,msgtab]
 		iabove: 70,
 		lowrect: [0,140,320,60],
-		siderect: [50,0,270,160],
+		siderect: [50,0,270,170],
 		highrect: [0,0,320,60],
 		rectfloor: [0,60,320,140], 
 		rectwall: [0,0,320,140],
@@ -71,8 +70,13 @@ mpscene = (function () {
 		background: null,
 		middle: null,
 
+		clipreq: false,
+		clip: false,
+		cliprect: [0,0,0,0], 
+
 		aabb: [],	// screen rect, slot num ( array elements 0,1 are container aabb's)
-		sprites: [], 
+		sprites: [],
+
 	};
 
 	var img = {
@@ -122,9 +126,9 @@ mpscene = (function () {
 		floor:[],
 		pet:[],
 		found:[],
-		iconsize: 24,
+		iconsize: [40, 2, 19, 16, 25],
 		lowrect: [0,140,320,60],
-		siderect: [50,0,270,160],
+		siderect: [50,0,270,170],
 		highrect: [0,0,320,60],
 		rectfloor: [0,60,320,140], //[0, highrect[4], 320, (200-highrect[4])],
 		rectwall: [0,0,320,140], //[0, 0, 320, lowrect[1]],
@@ -280,7 +284,7 @@ mpscene = (function () {
 		itemdisp.select.active = false; 
 		itemdisp.select.aabb = null;
 		if(redraw && graph.middle) graph.middle(initParams.ctx);
-		drawSpriteList(initParams.ctx);
+		//drawSpriteList(initParams.ctx);
 	}
 
 	function setActionFeedback() {
@@ -308,6 +312,7 @@ mpscene = (function () {
 				}
 				else {
 					// draw selection icon 
+					drawRemoveClipRegion(initParams.ctx);
 					drawSelectionBox(itemdisp.select.aabb.box);
 				}
 				return true;
@@ -512,15 +517,17 @@ mpscene = (function () {
 				graph.middle = null;
 				// draw over any previous middle layer graphics
 				clearSpriteList();
+				drawRemoveClipRegion(ctx);			
 				graph.background(ctx);	
 				drawPet(ctx);
 				drawSpriteList(ctx);
 			} else {
 				dispItemClearSelection();
 				clearSpriteList();
+				drawRemoveClipRegion(ctx);			
 				graph.middle = drawPetAction;
 				graph.middle(ctx);
-				drawSpriteList(ctx);
+				//drawSpriteList(ctx);
 				//redraw(ctx);
 			}
 		}
@@ -544,15 +551,21 @@ mpscene = (function () {
 			}
 			// redraw scene
 			clearSpriteList();
+			drawRemoveClipRegion(ctx);			
 			graph.background(ctx);
 			if(graph.middle) graph.middle(ctx);
 			drawSpriteList(ctx);
 
-			if(graph.cam==2) {
-				input.cx = graph.prect[0] = 190;
-				input.cy = graph.prect[1] = 150;			
-				var s = { img:img.pet, rect:graph.prect };
-				blitSprite(ctx, s);
+			if(graph.cam===2) {
+				input.ax = graph.panim.click[0] = 0;	// reset so pet doesn't move to last button press
+				graph.pvec = [0,relcoord.scale*(relcoord.vfy-relcoord.phhalf),relcoord.scale*(-180)];
+				scaleArrayAssign(graph.panim.target, graph.pvec, 1);
+				drawPet(ctx);
+				drawSpriteList(ctx);
+			// 	input.cx = graph.prect[0] = 190;
+			// 	input.cy = graph.prect[1] = 150;			
+			// 	var s = { img:img.pet, rect:graph.prect };
+			// 	blitSprite(ctx, s);
 			} else {
 				if(graph.panim.type!=="none") drawPet(ctx);
 			}
@@ -618,6 +631,39 @@ mpscene = (function () {
 				}
 				redraw(ctx);
 			}				
+		}
+
+		if(graph.panim.type==="followX") {
+			if(input.ax!==graph.panim.click[0]) {	
+			 	graph.panim.click = [input.ax,input.ay];
+				 // reset target, map X screen space picking coord to floor position
+				var vec = [0,relcoord.scale*(relcoord.vfy-relcoord.phhalf),relcoord.scale*(-180)];
+				var scale = (initParams.perspectiveW + vec[2]) / initParams.perspectiveW;
+				var midx = relcoord.scale*relcoord.cwhalf;
+			 	vec[0] = (input.ax-midx) * scale;
+			 	graph.panim.target = vec;
+			 	setPetAnimKeys(animKeySeq.walk);
+			}
+			var k = graph.panim.key;
+			if( equivalentVectorsXZ(graph.pvec, graph.panim.target) ) {
+				// not moving 
+				if(!setPetAnimKeys(null))
+					return;
+			}
+			else {
+				// move towards target
+				stepPosXZ(dt, graph.pvec, graph.panim);
+
+				if(k) {
+					// update keyframe sequence, change the image in pet sprite
+					var nframe = k.n;
+					graph.psprite.sheet.frame = k.seq[nframe];
+					var next = ( (nframe+1)===k.len )? 0:(nframe+1);
+					k.n = next;
+				}				
+			}
+			redraw(ctx);
+			return;
 		}
 
 		if(graph.panim.type==="follow") {
@@ -747,7 +793,7 @@ mpscene = (function () {
 
 
 	function drawItems(ctx, place, background) {
-		var dfn = blitSpriteToHud;//blitSpriteFrame;
+		var dfn = blitSpriteFrame;//blitSpriteToHud;//blitSpriteFrame;
 		var list = itemdisp.slot;
 		var list = itemdisp.found;
 		var dock = itemdisp.highrect;
@@ -756,22 +802,26 @@ mpscene = (function () {
 		var usepos3d = false;
 		var usepos2d = false;
 		var aabb = true;
+		var clip = null;
 	
 		switch(place){
 			case "feed":
 				msg = mpdata.items.msg[0];
+				clip = itemdisp.rectfloor;
 				list = dispItemFind(mpdata.actionflag.feed);
 				var s = {rect:dock};
 				graph.aabb[0] = { box:calcBoundingBox(s), dec:0, n:0 };
 				break;
 			case "clean":
 				msg = mpdata.items.msg[1];
+				clip = itemdisp.rectfloor;
 				list = dispItemFind(mpdata.actionflag.clean);
 				var s = {rect:dock};
 				graph.aabb[0] = { box:calcBoundingBox(s), dec:0, n:0 };
 				break;
 			case "floor":
 				msg = mpdata.items.msg[3];
+				clip = itemdisp.rectfloor;
 				list = dispItemFind(mpdata.actionflag.floor, true);
 				var s = {rect:dock};
 				graph.aabb[0] = { box:calcBoundingBox(s), dec:0, n:0 };
@@ -792,6 +842,7 @@ mpscene = (function () {
 			case "wall":
 				msg = mpdata.items.msg[3];
 				dock = itemdisp.lowrect;
+				clip = itemdisp.rectwall;
 				list = dispItemFind(mpdata.actionflag.wall, true);
 				var s = {rect:dock};
 				graph.aabb[0] = { box:calcBoundingBox(s), dec:0, n:0 };
@@ -810,7 +861,7 @@ mpscene = (function () {
 				graph.aabb[1] = { box:calcBoundingBox(s), dec:1, n:0 };
 				break;
 			case "shop":
-				dfn = blitSpriteFrame;
+				//dfn = blitSpriteFrame;
 				msg = mpdata.items.msg[2];
 				list = itemdisp.shop;
 				dock = itemdisp.siderect;
@@ -818,7 +869,7 @@ mpscene = (function () {
 				break;
 		}
 
-		if(background) {
+		if(background) {		
 			var backspr= {img:background, sheet:null, rect:dock};
 			dfn(ctx, backspr);
 			//ctx.drawImage(background, dock[0], dock[1], dock[2], dock[3]);
@@ -826,7 +877,7 @@ mpscene = (function () {
 
 		var msize = 0;
 		if(msg) {
-			msize = 19;
+			msize = itemdisp.iconsize[2];
 			ctx.font = '14px san-serif';
 			ctx.fillStyle = 'rgb(0, 0, 0)';
 			var mx = dock[0];	
@@ -835,15 +886,16 @@ mpscene = (function () {
 				ctx.textAlign = "center";
 				mx += dock[2]*0.5;
 			}
-			ctx.fillText(msg, mx, dock[1]+16);
+			ctx.fillText(msg, mx, dock[1]+itemdisp.iconsize[3]);
 			ctx.textAlign = "start";		
 		}
 		msg = null;
 		var label = null;
 		var price = null;
-		var dsize = 40;
-		var dpsize = dsize+2;
-		var xd = dock[0]+20;
+		var dsize = itemdisp.iconsize[0];
+		var dpsize = dsize+itemdisp.iconsize[1];
+		var xd = dock[0]+itemdisp.iconsize[4];
+		var xld = xd+itemdisp.iconsize[0]*2.3;
 		var yd = dock[1]+msize;
 
 		var i;
@@ -860,7 +912,7 @@ mpscene = (function () {
 			}
 
 			if(vert) {
-				list[i].spr.rect = [xd, yd+dpsize*i, dsize, dsize];
+				list[i].spr.rect = [xd+dpsize, yd+dpsize*i, dsize, dsize];
 			} else {
 				if(usepos3d) {
 					// sprite y pos depends on floor pos, item height & base in image (not necessarily bottom as there might be a shadow)
@@ -887,13 +939,41 @@ mpscene = (function () {
 				msg = itm.desc;
 				label = itm.name+':';
 				price = itm.buy+' coins';
-				wrapText(ctx, msg, xd+64, yd+20+dpsize*i, 150, 16);
+				wrapText(ctx, msg, xld, yd+20+dpsize*i, 150, 16);
+				//wrapText(ctx, msg, xd+90, yd+20+dpsize*i, 150, 16);
 				ctx.font = 'bold 14px san-serif';
 				ctx.fillText(label, xd, yd+20+dpsize*i);
 				ctx.font = '14px san-serif';
 				ctx.fillText(price, xd, yd+40+dpsize*i);
 			}
 		}
+
+		if(clip) {
+			// request a new clip region to be applied later
+			graph.clipreq = true;
+			scaleArrayAssign(graph.cliprect, clip, 1);
+		}
+	}
+
+	function drawSetClipRegion(ctx) {
+		if(graph.clipreq) {
+			graph.clipreq = false;
+			// remove old clip region first
+			drawRemoveClipRegion(ctx);
+
+			ctx.save();
+			ctx.beginPath();
+			ctx.rect(graph.cliprect[0], graph.cliprect[1], graph.cliprect[2], graph.cliprect[3]);
+			ctx.clip();	
+			ctx.closePath();
+			graph.clip = true;	
+		}
+	}
+	function drawRemoveClipRegion(ctx) {
+		if(graph.clip) {
+			ctx.restore();
+			graph.clip = false;
+		}		
 	}
 
 	function drawFarBackground(ctx) {
@@ -912,6 +992,8 @@ mpscene = (function () {
 	function drawNormalBackground(ctx) {
 		drawFarBackground(ctx);
 		drawItems(ctx,"wallnormal");
+		drawSpriteList(ctx);
+		clearSpriteList();
 		// redraw floor colour to emulate clip / 3d
 		var w = relcoord.scale * relcoord.cw;
 		var h = relcoord.scale * relcoord.ch;
@@ -942,12 +1024,14 @@ mpscene = (function () {
 			drawItems(ctx,"floordecor");
 			drawSpriteList(ctx);
 		}
+		drawRemoveClipRegion(ctx);
 		var imgback = img.think;
 		drawItems(ctx, act, imgback);
 		// draw selection box
 		if(itemdisp.select.active) {
 			drawSelectionBox(itemdisp.select.aabb.box);
 		}
+		drawSetClipRegion(ctx);
 	}
 
 	// function drawWallDecor(ctx) {

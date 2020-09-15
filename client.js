@@ -447,7 +447,7 @@ function updateSceneGraph(q, n, next){
 
 	if(next===4) {
 		graph.cam = 2;
-		graph.animtype = "blit";
+		graph.animtype = "followX";
 	}	
 	else if(q===2||q===3||q===7||q===8) {
 		// scene ui for using items: feed,clean
