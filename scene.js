@@ -435,6 +435,11 @@ mpscene = (function () {
 				if(r[0]<x && r[1]>x) {
 					if(r[2]<y && r[3]>y) {
 						hit = true;
+						if(graph.aabb[i].dec===0) {
+							// early out if item is not used in decoration
+							aabb = graph.aabb[i];
+							break;
+						}
 						if(smallest) {
 							// check each hit and return the smallest width box
 							var bwidth = graph.aabb[i].box[1]-graph.aabb[i].box[0];
@@ -1001,6 +1006,7 @@ mpscene = (function () {
 
 			dfn(ctx,list[i].spr);
 			if(vert) {
+				ctx.textAlign = "start";
 				itm = mpdata.items.all[list[i].idx];
 				msg = itm.desc;
 				label = itm.name+':';

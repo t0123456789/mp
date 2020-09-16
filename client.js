@@ -814,8 +814,9 @@ function multiplayResults() {
 	switch(rank.log.pos) {
 		case 1:
 			txt.short = mpdata.txt.fini.first; 
-			client.prog.award++;
-			// need to add item too.?
+			client.qstate.award++;
+			// check if we need to add an award item / mystery item...
+
 			break;
 		case 2:
 			txt.short = mpdata.txt.fini.second; break;
