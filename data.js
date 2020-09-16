@@ -16,7 +16,7 @@
         current: null,
 
         menu: function(n) {
-            var q = this.tutorial; //this.quizempty;
+            var q = this.quizempty; //this.tutorial; //this.quizempty;
             if(n) {
                 if(n.num===1) { q = this.scenemenu; }		
                 if(n.num===2) { q = this.comp1; }		
@@ -209,7 +209,7 @@
             { name:"food", perish:true, buy:10, wh:[40,40], img:"imgsmall", sheet:{grp:0, frame:0, size:40}, actions:[af.feed], desc:"A portion of food, once a day is perfect." },
             { name:"bed", buy:100, wh:[70,70], img:"imgsmall", sheet:{grp:0, frame:1, size:40}, actions:[af.floor], desc:"A comfy bed for your pet." },
             { name:"flowers", buy:20, wh:[40,40], img:"imgsmall", sheet:{grp:0, frame:2, size:40}, actions:[af.floor|af.wall|af.brush], desc:"Plants can attract wildlife." },
-            { name:"autofeed", buy:1000, wh:[40,40], img:"imgsmall", sheet:{grp:0, frame:3, size:40}, actions:[af.feed], desc:"Automatically feeds a portion a day forever." },
+            { name:"vitgummi", buy:200, wh:[40,40], img:"imgsmall", sheet:{grp:0, frame:3, size:40}, actions:[af.feed], desc:"Vitamin boosting gummy chewy treat." },
             { name:"tree", buy:100, wh:[80,150], img:"img3", actions:[af.floor|af.wall], desc:"Trees improve the environment." },
             { name:"towel", buy:30, wh:[50,50], img:"imgsmall", sheet:{grp:1, frame:0, size:40}, actions:[af.clean|af.floor|af.wall], desc:"Rub gently to clean and dry." },
             { name:"bubbles", buy:100, wh:[40,40], img:"imgsmall", sheet:{grp:1, frame:1, size:40}, actions:[af.clean], desc:"Dissolves stubborn dirt and smells." },

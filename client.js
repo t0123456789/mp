@@ -762,7 +762,6 @@ function setRanking(tpen) {
 		}
 	}
 
-
 	// sort players by final time 
 	player.sort( function(a,b) {
 		return a.prog.finaltime - b.prog.finaltime;
@@ -778,7 +777,7 @@ function setRanking(tpen) {
 		var petname = mpdata.pet[player[i].pet].name;
 		var p = player[i].prog;
 		rank.txt += '</th><td>'+petname+'</td><td>'+p.acc+'/'+p.qsteps;
-		rank.txt += '</td><td>'+p.time+'</td><td>'+p.finaltime+'</td></tr>';
+		rank.txt += '</td><td>'+Math.round(p.time)+'</td><td>'+Math.round(p.finaltime)+'</td></tr>';
 	}
 	rank.txt += '</table>';
 	rank.txt += bufftxt.help;

@@ -87,8 +87,6 @@
                     var lg = p.qstate.log[idx];
                     idx = idx - 1;
                     textelem.innerHTML += '<li> L'+lg.level+' '+lg.name+' '+lg.score+'</li>';
-                    textelem.innerHTML += '<li> L'+lg.level+' '+lg.name+' '+lg.score+'</li>';
-                    textelem.innerHTML += '<li> L'+lg.level+' '+lg.name+' '+lg.score+'</li>';
                 }
                 textelem.innerHTML += '</ul>';
             }

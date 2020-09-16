@@ -40,7 +40,7 @@ mpscene = (function () {
 		ph: 50,
 		pwhalf: 25,
 		phhalf: 25,
-		iconsize: [40, 2, 19, 16, 20],	// for icon size,spacing,placement etc [item,itempad,msgpad,msgtab]
+		iconsize: [40, 2, 19, 16, 24, 30, 60],	// for icon size,spacing,placement etc [item,itempad,titlepad,msgpad,msgtab,scrolliconsize]
 		iabove: 70,
 		lowrect: [0,140,320,60],
 		siderect: [50,0,270,170],
@@ -113,7 +113,19 @@ mpscene = (function () {
 		slot: [ 
 			{idx:0, item:null, spr:null, dec:0, slink:0 },
 			{idx:0, item:null, spr:null, dec:0, slink:1 },
-			{idx:0, item:null, spr:null, dec:0, slink:2 },
+			{idx:3, item:null, spr:null, dec:0, slink:2 },
+			{idx:0, item:null, spr:null, dec:0, slink:3 },
+			{idx:0, item:null, spr:null, dec:0, slink:4 },
+			{idx:7, item:null, spr:null, dec:0, slink:5 },
+			{idx:0, item:null, spr:null, dec:0, slink:6 },
+			{idx:0, item:null, spr:null, dec:0, slink:7 },
+			{idx:0, item:null, spr:null, dec:0, slink:8 },
+			{idx:4, item:null, spr:null, dec:0, slink:9 },
+			{idx:4, item:null, spr:null, dec:0, dlink:0, slink:10, pos:[0, 0, 80, 150] },
+			{idx:4, item:null, spr:null, dec:0, dlink:0, slink:11, pos:[0, 0, 80, 150] },
+			{idx:4, item:null, spr:null, dec:0, dlink:0, slink:12, pos:[0, 0, 80, 150] },
+			{idx:4, item:null, spr:null, dec:0, dlink:0, slink:13, pos:[0, 0, 80, 150] },
+			{idx:4, item:null, spr:null, dec:0, dlink:0, slink:14, pos:[0, 0, 80, 150] },
 			{idx:5, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[0, 100, 50, 50] },
 			{idx:2, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[90, 80, 50, 50] },
 			{idx:4, item:null, spr:null, dec:2, dlink:0, slink:0, pos:[100, 0, 80, 150] },
@@ -126,7 +138,8 @@ mpscene = (function () {
 		floor:[],
 		pet:[],
 		found:[],
-		iconsize: [40, 2, 19, 16, 25],
+		limit: { enable:true, max:6, section:0, upregion:[0,0,30,60], downregion:[290,0,30,60] },
+		iconsize: [40, 2, 19, 16, 24, 30, 60], // [5],[6] are x,y size of scroll button rects
 		lowrect: [0,140,320,60],
 		siderect: [50,0,270,170],
 		highrect: [0,0,320,60],
@@ -284,7 +297,6 @@ mpscene = (function () {
 		itemdisp.select.active = false; 
 		itemdisp.select.aabb = null;
 		if(redraw && graph.middle) graph.middle(initParams.ctx);
-		//drawSpriteList(initParams.ctx);
 	}
 
 	function setActionFeedback() {
@@ -299,6 +311,22 @@ mpscene = (function () {
 			// no selected item atm, check all possible items 
 			var ret = hitAabb(x, y, false, true);
 			if(ret.hit) {
+				if(itemdisp.limit.enable) {
+					// check if item view up/down region is hit
+					if(ret.aabb.n<0) {
+						// don't select an item, redraw items in next section 
+						if(ret.aabb.n===-1) {
+							itemdisp.limit.section = itemdisp.limit.section - 1;
+							if(itemdisp.limit.section<0) itemdisp.limit.section = 0;
+						} else {
+							itemdisp.limit.section = itemdisp.limit.section + 1;
+							if(itemdisp.limit.section>itemdisp.limit.maxsec) itemdisp.limit.section = itemdisp.limit.maxsec;
+						}
+						//drawRemoveClipRegion(initParams.ctx);
+						dispItemClearSelection(true);
+						return;
+					}
+				}
 				itemdisp.select.active = true;
 				itemdisp.select.aabb = ret.aabb;
 
@@ -468,6 +496,15 @@ mpscene = (function () {
 			scaleArrayAssign(itemdisp.highrect, relcoord.highrect, s);
 			scaleArrayAssign(itemdisp.rectfloor, relcoord.rectfloor, s);
 			scaleArrayAssign(itemdisp.rectwall, relcoord.rectwall, s);
+
+			if(itemdisp.limit.enable) {
+				// set scroll region size 
+				itemdisp.limit.upregion[2] = itemdisp.limit.downregion[2] = itemdisp.iconsize[5];
+				itemdisp.limit.upregion[3] = itemdisp.limit.downregion[3] = itemdisp.iconsize[6];
+				// x,y pos depends on docked container, can set x now as it is same for either container
+				itemdisp.limit.upregion[0] = itemdisp.highrect[0];
+				itemdisp.limit.downregion[0] = itemdisp.highrect[2]-itemdisp.iconsize[5];
+			}
 		}
 
 		// fix up pre loaded assets
@@ -579,18 +616,6 @@ mpscene = (function () {
 		var ctx = initParams.ctx;
 
 		if(graph.panim.type==="none") return;
-
-		// if(graph.panim.type==="clickX") {
-		// 	var x = input.cx-160;
-		// 	var y = 20;
-		// 	var z = -60;
-		// 	graph.pvec = [x,y,z];
-		// 	clearSpriteList();
-		// 	graph.background(ctx);
-		// 	drawPet(ctx);
-		// 	drawSpriteList(ctx);
-		// 	return;
-		// }
 
 		if(graph.panim.type==="clickXZ") {
 			var vec = map2dContainerTo3dFloorPos(input.cx, input.cy);
@@ -764,6 +789,7 @@ mpscene = (function () {
 		len = Math.sqrt(tx*tx+tz*tz);
 		// step in the direction towards target, moving at speed in pixel units per second (dt is in ms)
 		dsize = (dt / 1000) * (anim.speed / len);
+		if(dsize>40) dsize=40;	// limit step size if frame is delayed
 		dx = tx * dsize;
 		dz = tz * dsize;
 		vec3[0] += dx;
@@ -793,8 +819,7 @@ mpscene = (function () {
 
 
 	function drawItems(ctx, place, background) {
-		var dfn = blitSpriteFrame;//blitSpriteToHud;//blitSpriteFrame;
-		var list = itemdisp.slot;
+		var dfn = blitSpriteFrame;
 		var list = itemdisp.found;
 		var dock = itemdisp.highrect;
 		var msg = null;
@@ -803,6 +828,7 @@ mpscene = (function () {
 		var usepos2d = false;
 		var aabb = true;
 		var clip = null;
+		var section = false;
 	
 		switch(place){
 			case "feed":
@@ -811,6 +837,9 @@ mpscene = (function () {
 				list = dispItemFind(mpdata.actionflag.feed);
 				var s = {rect:dock};
 				graph.aabb[0] = { box:calcBoundingBox(s), dec:0, n:0 };
+				if(itemdisp.limit.enable && list.length>itemdisp.limit.max) {
+					section = true;
+				}				
 				break;
 			case "clean":
 				msg = mpdata.items.msg[1];
@@ -818,6 +847,9 @@ mpscene = (function () {
 				list = dispItemFind(mpdata.actionflag.clean);
 				var s = {rect:dock};
 				graph.aabb[0] = { box:calcBoundingBox(s), dec:0, n:0 };
+				if(itemdisp.limit.enable && list.length>itemdisp.limit.max) {
+					section = true;
+				}
 				break;
 			case "floor":
 				msg = mpdata.items.msg[3];
@@ -825,6 +857,9 @@ mpscene = (function () {
 				list = dispItemFind(mpdata.actionflag.floor, true);
 				var s = {rect:dock};
 				graph.aabb[0] = { box:calcBoundingBox(s), dec:0, n:0 };
+				if(itemdisp.limit.enable && list.length>itemdisp.limit.max) {
+					section = true;
+				}
 				break;
 			case "floornormal":
 				dfn = drawSprite;
@@ -846,6 +881,9 @@ mpscene = (function () {
 				list = dispItemFind(mpdata.actionflag.wall, true);
 				var s = {rect:dock};
 				graph.aabb[0] = { box:calcBoundingBox(s), dec:0, n:0 };
+				if(itemdisp.limit.enable && list.length>itemdisp.limit.max) {
+					section = true;
+				}
 				break;
 			case "wallnormal":
 				dfn = blitSpriteToWall;
@@ -861,7 +899,6 @@ mpscene = (function () {
 				graph.aabb[1] = { box:calcBoundingBox(s), dec:1, n:0 };
 				break;
 			case "shop":
-				//dfn = blitSpriteFrame;
 				msg = mpdata.items.msg[2];
 				list = itemdisp.shop;
 				dock = itemdisp.siderect;
@@ -887,19 +924,47 @@ mpscene = (function () {
 				mx += dock[2]*0.5;
 			}
 			ctx.fillText(msg, mx, dock[1]+itemdisp.iconsize[3]);
-			ctx.textAlign = "start";		
 		}
 		msg = null;
 		var label = null;
 		var price = null;
 		var dsize = itemdisp.iconsize[0];
 		var dpsize = dsize+itemdisp.iconsize[1];
+		var xh = dock[0]+itemdisp.iconsize[5];
 		var xd = dock[0]+itemdisp.iconsize[4];
 		var xld = xd+itemdisp.iconsize[0]*2.3;
 		var yd = dock[1]+msize;
 
+		var istart = 0;
+		var iend = list.length;
+		if(section) {
+			// limit the number of items in view and draw up&down buttons inside container
+			itemdisp.limit.maxsec = Math.ceil(iend/itemdisp.limit.max);	//max number of sections which contain all the items
+			itemdisp.limit.upregion[1] = itemdisp.limit.downregion[1] = dock[1];
+			ctx.font = '40px bold san-serif';
+			var yb = itemdisp.limit.upregion[1]+itemdisp.iconsize[0];
+			var xbhalf = itemdisp.iconsize[5]*0.5;
+			if(itemdisp.limit.section>0) ctx.fillText("<<", itemdisp.limit.upregion[0]+xbhalf, yb, itemdisp.iconsize[5]);
+			if(itemdisp.limit.section<itemdisp.limit.maxsec) ctx.fillText(">>", itemdisp.limit.downregion[0]+xbhalf, yb, itemdisp.iconsize[5]);
+			ctx.textAlign = "start";		
+
+			// add collision boxes for up&down buttons
+			var upregion= {img:null, sheet:null, rect:itemdisp.limit.upregion};
+			var downregion= {img:null, sheet:null, rect:itemdisp.limit.downregion};
+			pushAabb(calcBoundingBox(upregion), 0, -1);
+			pushAabb(calcBoundingBox(downregion), 0, -2);
+
+			//reset to first section if items are changed, itemdisp.limit.section=0
+
+			// show one section, click on up/down region to view other sections
+			istart = itemdisp.limit.section * itemdisp.limit.max;
+			iend = istart+itemdisp.limit.max;
+			if(iend>list.length) iend = list.length;
+		}
+
 		var i;
-		for(i=0; i<list.length; ++i){
+		var ipos = 0;
+		for(i=istart; i<iend; ++i){
 			var itm;
 			if(!list[i].item) {
 				itm = mpdata.items.all[list[i].idx];
@@ -928,7 +993,8 @@ mpscene = (function () {
 					scaleArrayAssign(wh, list[i].item.wh, relcoord.scale);
 					list[i].spr.rect = [list[i].pos[0]-wh[0]*0.5, list[i].pos[1]-wh[1]*0.5, wh[0], wh[1]];
 				} else {
-					list[i].spr.rect = [xd+dpsize*i, yd, dsize, dsize];						
+					list[i].spr.rect = [xh+dpsize*ipos, yd, dsize, dsize];	
+					ipos = ipos+1;					
 				}
 				if(aabb) pushAabb(calcBoundingBox(list[i].spr), list[i].dec, list[i].slink);
 			}
