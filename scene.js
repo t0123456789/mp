@@ -130,8 +130,7 @@ mpscene = (function () {
 			{idx:2, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[90, 80, 50, 50] },
 			{idx:4, item:null, spr:null, dec:2, dlink:0, slink:0, pos:[100, 0, 80, 150] },
 			{idx:9, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[0, 0, 320, 150] },
-			//{idx:10, item:null, spr:null, dec:0, dlink:0, slink:0, pos:[0, 150, 320, 50] },
-			{idx:11, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[10, 70, 300, 40] },
+			{idx:10, item:null, spr:null, dec:1, dlink:0, slink:0, pos:[10, 70, 300, 40] },
 		],
 
 		wall:[],
@@ -163,6 +162,7 @@ mpscene = (function () {
 		itemdisp.slot = src;
 
 		// fix up references to items, sprite img etc
+		var i;
 		for(i=0; i<src.length; ++i){
 			var itm = mpdata.items.all[list[i].idx];
 			src[i].item = itm;

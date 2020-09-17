@@ -1174,7 +1174,7 @@ function feedbackShop(res,num) {
 		var qn = client.quiz.arr[client.prog.qnum];
 		var pq;
 		
-		if(getState()=="pet") {
+		if(getState()==="pet") {
 			// print question in the info area, question div is replaced with canvas...
 			pq = document.getElementById("infotext");
 		} else {
