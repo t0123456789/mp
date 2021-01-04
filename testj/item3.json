@@ -1,0 +1,22 @@
+[
+    {
+        "name": "special 3 Grass",
+        "category": "Floor",
+        "id": 10107,
+        "flag": 1,
+        "tag": "mixed heath evergreen groundcover",
+        "cond": "sun shade semi dry moist wet light med clay",
+        "size": [0.2,2.0,4.0],
+        "age": 50,
+        "density": 1.0,
+        "city": "Twentynine Palms",
+        "state": "California",
+        "park": "Joshua Tree National Park",
+        "coordinates": {
+            "longitude": -116.166868,
+            "latitude": 34.011286
+        },
+        "imageName": "turtlerock"
+    },
+
+]

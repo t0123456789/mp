@@ -1,0 +1,99 @@
+[
+    {
+        "name": "p2Grass2",
+        "category": "Floor",
+        "id": 200100,
+        "flag": 1,
+        "tag": "mixed heath evergreen groundcover",
+        "cond": "sun shade semi dry moist wet light med clay",
+        "size": [0.2,2.0,4.0],
+        "age": 50,
+        "density": 1.0,
+        "city": "Twentynine Palms",
+        "state": "California",
+        "park": "Joshua Tree National Park",
+        "coordinates": {
+            "longitude": -116.166868,
+            "latitude": 34.011286
+        },
+        "imageName": "turtlerock"
+    },
+    {
+        "name": "p2 tree",
+        "category": "Tree",
+        "flag": 0,
+        "tag": "pioneer",
+        "cond": "sun shade semi dry moist wet light med clay",
+        "size": [0.2,7.0,20.0],
+        "age": 20,
+        "density": 0.4,
+        "city": "Port Alsworth",
+        "state": "Alaska",
+        "id": 201003,
+        "park": "Lake Clark National Park and Preserve",
+        "coordinates": {
+            "longitude": -152.665167,
+            "latitude": 59.980167
+        },
+        "imageName": "silversalmoncreek"
+    },
+    {
+        "name": "p2Yew",
+        "category": "Tree",
+        "flag": 3,
+        "tag": "slow",
+        "cond": "sun shade semi dry moist wet light med clay",
+        "size": [0.2,6.0,15.0],
+        "age": 50,
+        "density": 0.9,
+        "city": "Port Alsworth",
+        "state": "Alaska",
+        "id": 202001,
+        "park": "Lake Clark National Park and Preserve",
+        "coordinates": {
+            "longitude": -152.665167,
+            "latitude": 59.980167
+        },
+        "imageName": "silversalmoncreek"
+    },
+    {
+        "name": "p2Rowan",
+        "category": "Tree",
+        "flag": 1,
+        "tag": "hedge bird",
+        "cond": "sun shade semi dry moist wet light med clay",
+        "size": [0.2,2.0,4.0],
+        "age": 50,
+        "density": 0.9,
+        "city": "Skagway",
+        "state": "Alaska",
+        "id": 201023,
+        "park": "Klondike Gold Rush National Historical Park",
+        "coordinates": {
+            "longitude": -135.334571,
+            "latitude": 59.560551
+        },
+        "imageName": "turtlerock"
+    },
+    {
+        "name": "p2Lime",
+        "category": "Tree",
+        "flag": 1,
+        "tag": "hedge bird",
+        "cond": "sun shade semi dry moist wet light med clay",
+        "size": [0.2,2.0,4.0],
+        "age": 50,
+        "density": 0.9,
+        "city": "Browning",
+        "state": "Montana",
+        "id": 201024,
+        "park": "Glacier National Park",
+        "coordinates": {
+            "longitude": -113.536248,
+            "latitude": 48.69423
+        },
+        "imageName": "stmarylake"
+    },
+    
+
+]
